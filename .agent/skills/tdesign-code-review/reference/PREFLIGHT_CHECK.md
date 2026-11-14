@@ -57,11 +57,11 @@ gh --version
 
 ### 2.3 使用 GitHub Releases 安装
 
-1. 打开 [GitHub CLI 最新发布页](https://github.com/cli/cli/releases/latest)，或通过 [GitHub API](https://api.github.com/repos/cli/cli/releases/latest) 获取最新版本的 `assets`。
+- 打开 [GitHub CLI 最新发布页](https://github.com/cli/cli/releases/latest)，或通过 [GitHub API](https://api.github.com/repos/cli/cli/releases/latest) 获取最新版本的 `assets`。
 
-2. 根据系统和架构选择对应安装包
+- 根据系统和架构选择对应安装包
 
-3. 验证安装
+- 验证安装
 
 ```bash
 gh --version
@@ -77,7 +77,7 @@ gh --version
 gh auth status
 ```
 
-- **已登录**：确认存在 active account，进入第 4 节。
+- **已登录**：确认存在 active account，进入 §4。
 - **未登录**：
   1. **告知用户**：接下来要在完成 GitHub 授权（浏览器或 device code），审查暂停至登录成功。
   2. 执行 `gh auth login`。
