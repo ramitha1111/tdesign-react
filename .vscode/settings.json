@@ -71,5 +71,20 @@
     "*.xaml": "$(capture).xaml.cs",
     "tsconfig.json": "tsconfig.*.json",
     "vitest.config.ts": "babel.config.js, postcss.config.js"
+  },
+  "search.exclude": {
+    ".cursor/skills": true,
+    ".claude/skills": true,
+    ".codebuddy/skills": true
+  },
+  "files.exclude": {
+    ".cursor/skills": true,
+    ".claude/skills": true,
+    ".codebuddy/skills": true
+  },
+  "files.watcherExclude": {
+    ".cursor/skills/**": true,
+    ".claude/skills/**": true,
+    ".codebuddy/skills/**": true
   }
 }

@@ -7,7 +7,7 @@ description: This skill should be used when reviewing GitHub Pull Requests, anal
 
 ## 0. 前置检查
 
-根据 [PREFLIGHT_CHECK.md](reference/PREFLIGHT_CHECK.md) 流程确认 `gh` 的安装与登录。默认只审查，不提交代码。
+根据 [PREFLIGHT_CHECK.md](reference/PREFLIGHT_CHECK.md) 确认 `gh` 的安装与登录。默认只审查，不提交代码。
 
 ---
 
@@ -66,7 +66,7 @@ gh pr diff "$N" --repo Tencent/tdesign-react
 
 ### 3.2 本地跑测
 
-全文 [LOCAL_VERIFY.md](reference/LOCAL_VERIFY.md)（含 `TEST_PATH`、分支与降级）。
+根据 [LOCAL_VERIFY.md](reference/LOCAL_VERIFY.md) 的流程进行测试。
 
 | 阶段 | 分支      | 期望                  |
 | ---- | --------- | --------------------- |
