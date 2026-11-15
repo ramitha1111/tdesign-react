@@ -268,7 +268,7 @@ const FormItem = forwardRef<FormItemInstance, FormItemProps>((originalProps, ref
       });
     // 仅有自定义校验方法才会存在 successList
     result.successList = result.resultList.filter(
-      (item) => item && item.result === true && item.message && item.type === 'success',
+      (item) => item?.result === true && !!item.message && item.type === 'success',
     );
     return result;
   }
