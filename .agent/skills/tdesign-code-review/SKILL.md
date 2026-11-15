@@ -48,20 +48,22 @@ gh pr diff "$N" --repo Tencent/tdesign-react
 
 ### 逻辑正确性
 
-事件链、状态流转、生命周期、边界条件是否正确。
+是否事件链、状态流转、生命周期、边界条件均正确。
 
 ### API 契约
 
-公开 API、类型、默认值、行为是否与文档及历史用法兼容。
+是否公开 API、类型、默认值、行为与文档及历史用法兼容。
 
 ### 样式与结构
 
-- **ClassName**：是否使用 `classPrefix`、BEM 是否与组件既有命名风格一致。
-- **Inline style**：是否确有运行时计算必要；是否用内联间距、颜色等补丁替代设计体系，导致观感或交互与 TDesign 不一致。
+涉及类名、内联 `style` 或 `packages/common/style` 时，须对照该组件 `packages/common/style/web/components/<组件>/` 后再判断：
+
+- **ClassName**：是否使用 `classPrefix`，且 BEM 与同组件 common Less 一致。
+- **Inline style**：是否仅用于运行时测量或交互结果（如宽高、transform 等）。禁止将静态间距、颜色、对齐以内联补丁代替 common Less，从而破坏组件样式，导致观感与 TDesign 设计风格不一致。
 
 ### 测试质量
 
-涉及测试时，**必须先完整阅读** [tdesign-component-test](../tdesign-component-test/SKILL.md) 的 **§3**，按其中规范逐项核对。
+严格遵循 [tdesign-component-test](../tdesign-component-test/SKILL.md) **§3** 的规范。
 
 ### 2.1 合并判定
 
@@ -89,11 +91,10 @@ gh pr diff "$N" --repo Tencent/tdesign-react
 
 根据 [LOCAL_VERIFY.md](reference/LOCAL_VERIFY.md) 的流程进行测试。
 
-| 阶段 | 分支                 | 期望                                                            |
-| ---- | -------------------- | --------------------------------------------------------------- |
-| 复现 | `develop`            | `TEST_PATH` 失败                                                |
-| 切换 | `develop` → `pr-<N>` | 同一份 `TEST_PATH`；按需完成 §V-5.1 末尾切换说明，再进入 §V-5.2 |
-| 修复 | `pr-<N>`             | 同一 `TEST_PATH` 通过                                           |
+| 阶段 | 分支      | 期望             |
+| ---- | --------- | ---------------- |
+| 复现 | `develop` | `TEST_PATH` 失败 |
+| 修复 | `pr-<N>`  | `TEST_PATH` 通过 |
 
 ---
 
