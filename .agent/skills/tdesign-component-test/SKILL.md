@@ -7,7 +7,7 @@ description: This skill should be used when writing and maintaining unit tests f
 
 本技能提供 TDesign React 组件单元测试的最佳实践。
 
-## 触发条件
+## 1. 触发条件
 
 当用户需要执行以下任务时使用此技能：
 
@@ -15,7 +15,7 @@ description: This skill should be used when writing and maintaining unit tests f
 - 为出现的 Bug 编写回归测试
 - 提高测试覆盖率
 
-### 设计原则
+### 1.1 设计原则
 
 - 优先编写精简、针对性强的用例，避免冗长的测试逻辑。
 - 针对 Bug 修复新增的回归测试，必须满足：
@@ -23,7 +23,7 @@ description: This skill should be used when writing and maintaining unit tests f
   - 在 Bug 修复后的分支上测试通过。
   - 测试必须准确复现 Bug 场景，并验证修复后的预期行为。
 
-## 框架和工具
+## 2. 框架和工具
 
 | 工具                        | 用途               |
 | --------------------------- | ------------------ |
@@ -44,9 +44,9 @@ description: This skill should be used when writing and maintaining unit tests f
 - `simulateKeydownEvent` - 键盘事件模拟
 - `waitFor` - 异步断言
 
-## 文件规范
+## 3. 文件规范
 
-### 文件位置和命名
+### 3.1 文件位置和命名
 
 ```bash
 packages/components/[component-name]/
@@ -62,12 +62,12 @@ packages/components/[component-name]/
 - 同一组件的附属节点不单独建测试文件，应在所属主组件的测试文件中覆盖，如 ListItem 写入 list.test.tsx。
 - 测试用例数量不影响文件归属，禁止以用例数量为由拆分或新建测试文件。
 
-### 文件内容和结构
+### 3.2 文件内容和结构
 
 - 固定顶层结构：组件渲染测试只允许以下四种顶层 describe：`props`、`events`、`instanceFunctions`、`scenarios`。禁止在组件根 describe 下直接编写 `test(...)`；禁止新增与上述四类平级的顶层 describe。hooks、utils 等纯逻辑测试文件按被测模块组织 describe，不套用这四种分类。
 - 同一 prop、API 或场景存在 ≥ 3 条 `test`，或存在组内共用的 render、fixture、mock 数据时，在已选定的顶层 describe 内新增子 describe；否则直接编写 `test`，不新增子 describe。
 
-#### 骨架示例
+#### 3.2.1 骨架示例
 
 缺少对应示例时，可按需省略 `describe`。
 
@@ -80,7 +80,7 @@ describe("ComponentName", () => {
 });
 ```
 
-#### `props` — 属性与渲染
+#### 3.2.2 `props` — 属性与渲染
 
 | 要点         | 说明                                                                                       |
 | ------------ | ------------------------------------------------------------------------------------------ |
@@ -96,15 +96,15 @@ describe("ComponentName", () => {
 - 数组类型写成 `array<T>`，禁止 `string[]`
 - 布尔属性：常规开启时标题直接写属性名；只验证关闭时写 `propName[false]`；同一条用例同时覆盖开/关时写 `propName[boolean]`；与其他类型同测时放进斜杠，例如 `propName[false/TNode/function]`
 
-#### `events` — 事件与回调
+#### 3.2.3 `events` — 事件与回调
 
 - 覆盖回调 prop（如 `onChange`）是否按预期触发，以及回调参数是否符合约定
 
-#### `instanceFunctions` — 命令式 API
+#### 3.2.4 `instanceFunctions` — 命令式 API
 
 - 覆盖 `ref` 暴露的命令式方法、Plugin 静态方法等；组件无此类 API 时省略整个 describe
 
-#### `scenarios` — 联动与业务流
+#### 3.2.5 `scenarios` — 联动与业务流
 
 | 要点               | 说明                                                                                      |
 | ------------------ | ----------------------------------------------------------------------------------------- |
@@ -113,7 +113,7 @@ describe("ComponentName", () => {
 | 与 `props` 的边界  | 单 prop 或多 prop 组合的简单渲染测试归入 `props`，不放在此处                              |
 | 与 `events` 的边界 | 仅验证回调是否触发及参数的测试归入 `events`                                               |
 
-## 测试命令
+## 4. 测试命令
 
 ```bash
 pnpm test                                                    # 运行所有测试
@@ -133,12 +133,12 @@ pnpm exec vitest run <component>                             # 运行指定组�
 
 ---
 
-## 常见问题
+## 5. 常见问题
 
-### Q: 如何处理异步组件？
+### 5.1 如何处理异步组件？
 
-A: 使用 `mockDelay`、`mockTimeout`、`waitFor` 或 `act`，在断言前等待 UI 更新。
+使用 `mockDelay`、`mockTimeout`、`waitFor` 或 `act`，在断言前等待 UI 更新。
 
-### Q: 快照测试失败怎么办？
+### 5.2 快照测试失败怎么办？
 
-A: 首先检查变更是否预期内。如果是预期变更，用上面的 `pnpm test:update` 或带 `-u` 的组件命令更新快照。
+首先检查变更是否预期内。如果是预期变更，用上面的 `pnpm test:update` 或带 `-u` 的组件命令更新快照。
