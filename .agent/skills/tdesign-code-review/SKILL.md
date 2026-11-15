@@ -64,13 +64,14 @@ gh pr diff "$N" --repo Tencent/tdesign-react
 | 组件  | 变更路径 / 标题            |
 | 复现  | 正文代码、StackBlitz、截图 |
 
-### 3.2 本地跑测
+### 3.2 本地测试
 
 根据 [LOCAL_VERIFY.md](reference/LOCAL_VERIFY.md) 的流程进行测试。
 
 | 阶段 | 分支      | 期望                  |
 | ---- | --------- | --------------------- |
 | 复现 | `develop` | `TEST_PATH` 失败      |
+| 切换 | `develop` → `pr-<N>` | 同一份 `TEST_PATH`；按需完成 §V-5.1 末尾切换说明，再进入 §V-5.2 |
 | 修复 | `pr-<N>`  | 同一 `TEST_PATH` 通过 |
 
 ---
