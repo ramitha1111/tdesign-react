@@ -56,11 +56,12 @@ gh pr diff "$N" --repo Tencent/tdesign-react
 
 ### 样式与结构
 
-DOM 结构、类名前缀、`packages/common/style` 联动是否符合项目约定。
+- **ClassName**：是否使用 `classPrefix`、BEM 是否与组件既有命名风格一致。
+- **Inline style**：是否确有运行时计算必要；是否用内联间距、颜色等补丁替代设计体系，导致观感或交互与 TDesign 不一致。
 
 ### 测试质量
 
-**必须先完整阅读** [tdesign-component-test](../tdesign-component-test/SKILL.md) 的 **§3**，按其中规范逐项核对。
+涉及测试时，**必须先完整阅读** [tdesign-component-test](../tdesign-component-test/SKILL.md) 的 **§3**，按其中规范逐项核对。
 
 ### 2.1 合并判定
 
