@@ -66,6 +66,7 @@ packages/components/[component-name]/
 
 - 固定顶层结构：组件渲染测试只允许以下四种顶层 describe：`props`、`events`、`instanceFunctions`、`scenarios`。禁止在组件根 describe 下直接编写 `test(...)`；禁止新增与上述四类平级的顶层 describe。hooks、utils 等纯逻辑测试文件按被测模块组织 describe，不套用这四种分类。
 - 同一 prop、API 或场景存在 ≥ 3 条 `test`，或存在组内共用的 render、fixture、mock 数据时，在已选定的顶层 describe 内新增子 describe；否则直接编写 `test`，不新增子 describe。
+- 测试用例只能使用英文。
 
 #### 3.2.1 骨架示例
 
@@ -89,10 +90,10 @@ describe("ComponentName", () => {
 
 **标题命名**
 
-- 方括号内只写具体类型或合法枚举值；多种类型或枚举值写在同一对方括号内，用斜杠分隔，例如 `propName[boolean/TNode]`、`propName[TNode/function]`、`propName[top/bottom/left]`
+- 方括号内只允许使用具体类型或合法枚举值；多种类型或枚举值写在同一对方括号内，用斜杠分隔，例如 `propName[boolean/TNode]`、`propName[TNode/function]`、`propName[top/bottom/left]`
 - 禁止把同一属性拆成 `propName[boolean] and propName[TNode]`
 - 不同属性各自一条用例；一条用例必须同时覆盖多个属性时用 `and` 连接，各属性内部的多种类型仍用斜杠，例如 `cancelBtn[object/TNode] and confirmBtn[object/TNode]`
-- 不得在方括号内写具体数值
+- 禁止在方括号内写具体数值
 - 数组类型写成 `array<T>`，禁止 `string[]`
 - 布尔属性：常规开启时标题直接写属性名；只验证关闭时写 `propName[false]`；同一条用例同时覆盖开/关时写 `propName[boolean]`；与其他类型同测时放进斜杠，例如 `propName[false/TNode/function]`
 
