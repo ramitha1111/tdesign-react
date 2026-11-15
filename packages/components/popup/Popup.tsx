@@ -1,6 +1,5 @@
 import React, { forwardRef, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react';
 import { CSSTransition } from 'react-transition-group';
-import { Placement, type Options } from '@popperjs/core';
 import classNames from 'classnames';
 import { debounce, isFunction } from 'lodash-es';
 
@@ -13,12 +12,14 @@ import useConfig from '../hooks/useConfig';
 import useControlled from '../hooks/useControlled';
 import useDefaultProps from '../hooks/useDefaultProps';
 import useMutationObserver from '../hooks/useMutationObserver';
-import usePopper, { type InnerPopperInstance } from '../hooks/usePopper';
+import usePopper from '../hooks/usePopper';
 import useWindowSize from '../hooks/useWindowSize';
 import { popupDefaultProps } from './defaultProps';
 import useTrigger from './hooks/useTrigger';
 import { getTransitionParams } from './utils/transition';
 
+import type { Options, Placement } from '@popperjs/core';
+import type { InnerPopperInstance } from '../hooks/usePopper';
 import type { PopupInstanceFunctions, TdPopupProps } from './type';
 
 /**
@@ -112,6 +113,7 @@ const Popup = forwardRef<PopupInstanceFunctions, PopupProps>((originalProps, ref
 
   const { triggerElementIsString, getTriggerElement, getTriggerNode, getPopupProps } = useTrigger({
     triggerElement,
+    popupElement,
     content,
     disabled,
     trigger,
@@ -212,20 +214,31 @@ const Popup = forwardRef<PopupInstanceFunctions, PopupProps>((originalProps, ref
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [visible, content, windowHeight, windowWidth]);
 
-  // 下拉展开时更新内部滚动条和箭头位置
+  // 下拉展开或内容变化时，调整箭头位置
   useEffect(() => {
     if (visible && popupElement && contentRef.current) {
       requestAnimationFrame(() => {
-        updateScrollTop?.(contentRef.current);
         updateArrowPosition();
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [visible, content, popupElement]);
 
+  // 下拉展开时，触发滚动回调
+  useEffect(() => {
+    if (visible && popupElement && contentRef.current) {
+      requestAnimationFrame(() => {
+        updateScrollTop?.(contentRef.current);
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [visible, popupElement]);
+
   function handleExited() {
     setIsOverlayHover(false);
-    !destroyOnClose && popupElement && (popupElement.style.display = 'none');
+    if (!destroyOnClose && popupElement) popupElement.style.display = 'none';
+    // 如果是 destroyOnClose 需要重置 popupElement 否则影响二次操作的判断
+    else setPopupElement(null);
   }
   function handleEnter() {
     setIsOverlayHover(true);
@@ -287,7 +300,11 @@ const Popup = forwardRef<PopupInstanceFunctions, PopupProps>((originalProps, ref
                 setPopupElement(node);
               }
             }}
-            style={{ ...styles.popper, zIndex, ...getOverlayStyle(overlayStyle) }}
+            style={{
+              ...styles.popper,
+              zIndex,
+              ...getOverlayStyle(overlayStyle),
+            }}
             className={classNames(`${classPrefix}-popup`, overlayClassName)}
             {...attributes.popper}
             onClick={(e) => props.onOverlayClick?.({ e })}

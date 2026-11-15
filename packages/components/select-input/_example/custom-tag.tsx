@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import { SelectInput, Tag } from 'tdesign-react';
+import React, { useEffect, useState } from 'react';
 import { ControlPlatformIcon } from 'tdesign-icons-react';
+import { SelectInput, Tag } from 'tdesign-react';
 
 const classStyles = `
 <style>
@@ -54,7 +54,10 @@ const OPTIONS = [
 ];
 
 const SelectInputCustomTag = () => {
-  const [selectValue1, setSelectValue1] = useState({ label: 'tdesign-vue', value: 1 });
+  const [selectValue1, setSelectValue1] = useState({
+    label: 'tdesign-vue',
+    value: 1,
+  });
   const [selectValue2, setSelectValue2] = useState(['tdesign-vue', 'tdesign-react']);
   const [selectValue3, setSelectValue3] = useState(['tdesign-vue', 'tdesign-react', 'tdesign-mobile-vue']);
 

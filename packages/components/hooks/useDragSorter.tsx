@@ -1,4 +1,5 @@
 import { useCallback, useState } from 'react';
+
 import useEventCallback from './useEventCallback';
 
 interface DragSortProps<T> {
@@ -36,7 +37,11 @@ function useDragSorter<T>(props: DragSortProps<T>): DragSortInnerProps {
   const [draggingIndex, setDraggingIndex] = useState(-1);
   const [dragStartData, setDragStartData] = useState(null);
   const [isDropped, setIsDropped] = useState(null);
-  const [startInfo, setStartInfo] = useState({ nodeX: 0, nodeWidth: 0, mouseX: 0 });
+  const [startInfo, setStartInfo] = useState({
+    nodeX: 0,
+    nodeWidth: 0,
+    mouseX: 0,
+  });
   const onDragSortEvent = useEventCallback(onDragSort);
 
   const onDragOver = useCallback(
@@ -134,7 +139,14 @@ function useDragSorter<T>(props: DragSortProps<T>): DragSortInnerProps {
     return {};
   }
 
-  return { onDragStart, onDragOver, onDrop, onDragEnd, getDragProps, dragging: draggingIndex !== -1 };
+  return {
+    onDragStart,
+    onDragOver,
+    onDrop,
+    onDragEnd,
+    getDragProps,
+    dragging: draggingIndex !== -1,
+  };
 }
 
 export default useDragSorter;

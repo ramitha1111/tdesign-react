@@ -1,11 +1,13 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { CalendarIcon as TdCalendarIcon } from 'tdesign-icons-react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import classNames from 'classnames';
-
+import { isArray, isObject } from 'lodash-es';
+import { CalendarIcon as TdCalendarIcon } from 'tdesign-icons-react';
 import { formatDate, getDefaultFormat, isValidDate, parseToDayjs } from '@tdesign/common-js/date-picker/format';
+
 import useConfig from '../../hooks/useConfig';
 import useGlobalIcon from '../../hooks/useGlobalIcon';
 import useInnerPopupVisible from '../../hooks/useInnerPopupVisible';
+import { isRangeFullyDisabled } from '../utils';
 import useRangeValue from './useRangeValue';
 
 import type { TdPopupProps } from '../../popup/type';
@@ -21,6 +23,11 @@ export default function useRange(props: TdDateRangePickerProps) {
 
   const isMountedRef = useRef(false);
   const inputRef = useRef<RangeInputRefInterface>(null);
+
+  const isSwitchTimeMode = useMemo(
+    () => isObject(props.enableTimePicker) && props.enableTimePicker.mode === 'switch',
+    [props.enableTimePicker],
+  );
 
   const {
     value,
@@ -74,7 +81,9 @@ export default function useRange(props: TdDateRangePickerProps) {
       [`${name}__input--placeholder`]: isHoverCell,
     }),
     onClick: ({ position }) => {
-      setActiveIndex(position === 'first' ? 0 : 1);
+      const index = position === 'first' ? 0 : 1;
+      if (isArray(props.disabled) && props.disabled[index]) return;
+      setActiveIndex(index);
     },
     onClear: ({ e }) => {
       e.stopPropagation();
@@ -87,12 +96,19 @@ export default function useRange(props: TdDateRangePickerProps) {
     },
     onFocus: (newVal: string[], { e, position }) => {
       props.onFocus?.({ value: newVal, partial: PARTIAL_MAP[position], e });
-      setActiveIndex(position === 'first' ? 0 : 1);
+      const index = position === 'first' ? 0 : 1;
+      if (isArray(props.disabled) && props.disabled[index]) return;
+      setActiveIndex(index);
     },
     onChange: (newVal: string[], { e, position }) => {
       const index = position === 'first' ? 0 : 1;
 
-      props.onInput?.({ input: newVal[index], value, partial: PARTIAL_MAP[position], e: e as React.FormEvent<HTMLInputElement> });
+      props.onInput?.({
+        input: newVal[index],
+        value,
+        partial: PARTIAL_MAP[position],
+        e: e as React.FormEvent<HTMLInputElement>,
+      });
       setInputValue(newVal);
 
       // 跳过不符合格式化的输入框内容
@@ -115,10 +131,17 @@ export default function useRange(props: TdDateRangePickerProps) {
 
       handlePopupInvisible();
       if (isValidDate(newVal, format)) {
-        onChange(formatDate(newVal, { format, targetFormat: valueType, autoSwap: true }) as DateValue[], {
-          dayjsValue: newVal.map((v) => parseToDayjs(v, format)),
-          trigger: 'enter',
-        });
+        onChange(
+          formatDate(newVal, {
+            format,
+            targetFormat: valueType,
+            autoSwap: true,
+          }) as DateValue[],
+          {
+            dayjsValue: newVal.map((v) => parseToDayjs(v, format)),
+            trigger: 'enter',
+          },
+        );
       } else if (isValidDate(value, format)) {
         setInputValue(formatDate(value, { format }));
       } else {
@@ -128,7 +151,7 @@ export default function useRange(props: TdDateRangePickerProps) {
   };
 
   const handleInnerVisibleChange = useInnerPopupVisible((visible, context) => {
-    if (props.disabled) return;
+    if (isRangeFullyDisabled(props.disabled)) return;
     // 这里劫持了进一步向 popup 传递的 onVisibleChange 事件，为了保证可以在 Datepicker 中使用 popupProps.onVisibleChange，故此处理
     props.popupProps?.onVisibleChange?.(visible, context);
     // 输入框点击不关闭面板
@@ -197,5 +220,6 @@ export default function useRange(props: TdDateRangePickerProps) {
     setIsFirstValueSelected,
     cacheValue,
     setCacheValue,
+    isSwitchTimeMode,
   };
 }

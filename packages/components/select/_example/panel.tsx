@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { Select, Divider, Button, Input, Space } from 'tdesign-react';
+import { Button, Divider, Input, Select, Space } from 'tdesign-react';
+
 import type { SelectProps } from 'tdesign-react';
 
 const OPTIONS: SelectProps['options'] = [
@@ -24,7 +25,10 @@ export default function PanelExample() {
 
   const handleClickConfirm = () => {
     const id = Math.round(Math.random() * 100);
-    const newBottomOptions = bottomOptions.concat({ label: inputVal, value: id });
+    const newBottomOptions = bottomOptions.concat({
+      label: inputVal,
+      value: id,
+    });
     setBottomOptions(newBottomOptions);
     changeInputVal('');
     toggleEditOrCreate('edit');
@@ -82,7 +86,12 @@ export default function PanelExample() {
                 </Button>
               </div>
             ) : (
-              <div style={{ padding: 8, borderTop: '1px solid var(--td-border-level-2-color)' }}>
+              <div
+                style={{
+                  padding: 8,
+                  borderTop: '1px solid var(--td-border-level-2-color)',
+                }}
+              >
                 <Input size="small" autofocus value={inputVal} onChange={(v) => changeInputVal(v)}></Input>
                 <Button size="small" style={{ marginTop: '12px' }} onClick={handleClickConfirm}>
                   确认

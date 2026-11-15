@@ -1,8 +1,8 @@
 import React, { useRef, useState } from 'react';
-import { Upload, Space, MessagePlugin, Checkbox, Button } from 'tdesign-react';
+import { Button, Checkbox, MessagePlugin, Space, Upload } from 'tdesign-react';
+import { getFileUrlByFileRaw } from '@tdesign/common-js/upload/utils';
 
 import type { UploadFile, UploadProps } from 'tdesign-react';
-import { getFileUrlByFileRaw } from '@tdesign/common-js/upload/utils';
 
 export default function UploadExample() {
   const uploadRef1 = useRef(null);
@@ -67,7 +67,10 @@ export default function UploadExample() {
     console.log('点击图片预览时触发', params);
   };
 
-  const formatResponse = () => ({ name: 'FileName', error: '网络异常，图片上传失败' });
+  const formatResponse = () => ({
+    name: 'FileName',
+    error: '网络异常，图片上传失败',
+  });
 
   return (
     <Space direction="vertical">

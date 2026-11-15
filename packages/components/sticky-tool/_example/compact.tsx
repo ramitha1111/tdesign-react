@@ -1,6 +1,6 @@
 import React from 'react';
-import { StickyTool, Space } from 'tdesign-react';
-import { ChatIcon, AddIcon, QrcodeIcon } from 'tdesign-icons-react';
+import { AddIcon, ChatIcon, QrcodeIcon } from 'tdesign-icons-react';
+import { Space, StickyTool } from 'tdesign-react';
 
 import type { StickyToolProps } from 'tdesign-react';
 
@@ -28,7 +28,9 @@ export default function Compact() {
         <StickyItem
           icon={<QrcodeIcon />}
           popup={<img alt="TDesign Logo" width="120" height="120" src="https://tdesign.gtimg.com/site/site.jpg" />}
-          popupProps={{ overlayInnerStyle: { padding: '4px', height: '128px' } }}
+          popupProps={{
+            overlayInnerStyle: { padding: '4px', height: '128px' },
+          }}
         ></StickyItem>
       </StickyTool>
     </Space>

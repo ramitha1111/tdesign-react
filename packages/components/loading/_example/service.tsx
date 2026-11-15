@@ -1,5 +1,5 @@
 import React from 'react';
-import { loading, Button } from 'tdesign-react';
+import { Button, loading } from 'tdesign-react';
 
 export default function Service() {
   const handleFullscreen = () => {
@@ -9,7 +9,9 @@ export default function Service() {
   };
 
   const handleAttach = () => {
-    const loadInstance = loading({ attach: () => document.querySelector('#loading-service') });
+    const loadInstance = loading({
+      attach: () => document.querySelector('#loading-service'),
+    });
 
     setTimeout(() => loadInstance.hide(), 1000);
   };
@@ -18,7 +20,13 @@ export default function Service() {
     <>
       <div
         id="loading-service"
-        style={{ width: '100%', height: '60px', textAlign: 'center', lineHeight: '60px', position: 'relative' }}
+        style={{
+          width: '100%',
+          height: '60px',
+          textAlign: 'center',
+          lineHeight: '60px',
+          position: 'relative',
+        }}
       >
         我是service的容器
       </div>

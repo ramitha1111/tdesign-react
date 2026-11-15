@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { NotificationPlugin, Button, Input, Space } from 'tdesign-react';
+import { Button, Input, NotificationPlugin, Space } from 'tdesign-react';
 
-import type { NotificationInfoOptions, InputValue } from 'tdesign-react';
+import type { InputValue, NotificationInfoOptions } from 'tdesign-react';
 
 export default function NotificationExample() {
   const [offsetY, setOffsetY] = useState<InputValue>('0');
@@ -25,13 +25,21 @@ export default function NotificationExample() {
           placeholder="请输入横向偏移量"
           value={offsetX}
           onChange={(v) => setOffsetX(v)}
-          style={{ width: '130px', display: 'inline-block', margin: '0 20px 36px 0' }}
+          style={{
+            width: '130px',
+            display: 'inline-block',
+            margin: '0 20px 36px 0',
+          }}
         />
         <Input
           placeholder="请输入纵向偏移量"
           value={offsetY}
           onChange={(v) => setOffsetY(v)}
-          style={{ width: '130px', display: 'inline-block', margin: '0 20px 36px 0' }}
+          style={{
+            width: '130px',
+            display: 'inline-block',
+            margin: '0 20px 36px 0',
+          }}
         />
       </Space>
       <Space>

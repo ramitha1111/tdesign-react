@@ -1,16 +1,17 @@
-import url from '@rollup/plugin-url';
-import json from '@rollup/plugin-json';
-import babel from '@rollup/plugin-babel';
-import styles from 'rollup-plugin-styles';
-import esbuild from 'rollup-plugin-esbuild';
-import replace from '@rollup/plugin-replace';
-import { terser } from 'rollup-plugin-terser';
-import commonjs from '@rollup/plugin-commonjs';
-import { DEFAULT_EXTENSIONS } from '@babel/core';
-import multiInput from 'rollup-plugin-multi-input';
-import nodeResolve from '@rollup/plugin-node-resolve';
-import analyzer from 'rollup-plugin-analyzer';
 import { resolve } from 'path';
+
+import analyzer from 'rollup-plugin-analyzer';
+import esbuild from 'rollup-plugin-esbuild';
+import multiInput from 'rollup-plugin-multi-input';
+import styles from 'rollup-plugin-styles';
+import { terser } from 'rollup-plugin-terser';
+import { DEFAULT_EXTENSIONS } from '@babel/core';
+import babel from '@rollup/plugin-babel';
+import commonjs from '@rollup/plugin-commonjs';
+import json from '@rollup/plugin-json';
+import nodeResolve from '@rollup/plugin-node-resolve';
+import replace from '@rollup/plugin-replace';
+import url from '@rollup/plugin-url';
 
 import pkg from '../packages/tdesign-react-aigc/package.json';
 
@@ -112,6 +113,7 @@ const getPlugins = ({ env, isProd = false } = {}) => {
 
 const cssConfig = {
   input: ['packages/pro-components/chat/style/index.js'],
+  external: (id) => externalDeps.some((dep) => id === dep || id.startsWith(`${dep}/`)),
   plugins: [multiInput({ relative: 'packages/pro-components/chat' }), styles({ mode: 'extract' })],
   output: {
     banner,

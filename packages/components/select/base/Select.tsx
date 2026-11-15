@@ -1,42 +1,32 @@
-import React, {
-  Children,
-  cloneElement,
-  isValidElement,
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from 'react';
+import React, { Children, cloneElement, isValidElement, useCallback, useEffect, useMemo, useRef } from 'react';
 import classNames from 'classnames';
 import { debounce, get, isFunction } from 'lodash-es';
+
 import forwardRefWithStatics from '../../_util/forwardRefWithStatics';
 import { getOffsetTopToContainer } from '../../_util/helper';
 import noop from '../../_util/noop';
-import { parseContentTNode } from '../../_util/parseTNode';
+import { extractTextFromTNode, parseContentTNode } from '../../_util/parseTNode';
 import { composeRefs } from '../../_util/ref';
 import FakeArrow from '../../common/FakeArrow';
 import useConfig from '../../hooks/useConfig';
 import useControlled from '../../hooks/useControlled';
 import useDefaultProps from '../../hooks/useDefaultProps';
+import useLayoutEffect from '../../hooks/useLayoutEffect';
 import Loading from '../../loading';
 import { useLocaleReceiver } from '../../locale/LocalReceiver';
-import SelectInput, {
-  SelectInputChangeContext,
-  type SelectInputValue,
-  type SelectInputValueChangeContext,
-} from '../../select-input';
+import SelectInput from '../../select-input';
 import Tag from '../../tag';
 import { selectDefaultProps } from '../defaultProps';
 import useKeyboardControl from '../hooks/useKeyboardControl';
 import useOptions, { isSelectOptionGroup } from '../hooks/useOptions';
-import { getKeyMapping, getSelectValueArr, getSelectedOptions } from '../util/helper';
+import { getKeyMapping, getSelectedOptions, getSelectValueArr } from '../util/helper';
 import Option from './Option';
 import OptionGroup from './OptionGroup';
 import PopupContent from './PopupContent';
 
 import type { StyledProps } from '../../common';
 import type { PopupVisibleChangeContext } from '../../popup';
+import type { SelectInputChangeContext, SelectInputValue, SelectInputValueChangeContext } from '../../select-input';
 import type { SelectOption, SelectValue, SelectValueChangeTrigger, TdOptionProps, TdSelectProps } from '../type';
 
 export interface SelectProps<T = SelectOption> extends TdSelectProps<T>, StyledProps {
@@ -44,6 +34,12 @@ export interface SelectProps<T = SelectOption> extends TdSelectProps<T>, StyledP
   children?: React.ReactNode;
   onMouseEnter?: (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => void;
   onMouseLeave?: (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => void;
+  /** @internal Whether keyboard navigation wraps around at the boundaries. Defaults to true. */
+  keyboardCircular?: boolean;
+  /** @internal Called when keyboard navigation reaches the first option. */
+  onKeyboardReachTop?: () => void;
+  /** @internal Called when keyboard navigation reaches the last option. */
+  onKeyboardReachBottom?: () => void;
 }
 
 type OptionsType = TdOptionProps[];
@@ -99,6 +95,9 @@ const Select = forwardRefWithStatics(
       onSearch,
       onEnter,
       onPopupVisibleChange,
+      keyboardCircular = true,
+      onKeyboardReachTop,
+      onKeyboardReachBottom,
     } = props;
     const readOnly = props.readOnly || props.readonly;
     const tagProps = { ...props.tagProps, ...props.tagInputProps?.tagProps };
@@ -110,7 +109,11 @@ const Select = forwardRefWithStatics(
     const selectInputRef = useRef(null);
     const { classPrefix } = useConfig();
     const { overlayClassName, onScroll, onScrollToBottom, ...restPopupProps } = popupProps || {};
-    const [isScrolling, toggleIsScrolling] = useState(false);
+
+    const isScrollingRef = useRef(false);
+    const toggleIsScrollingRef = (val: boolean) => {
+      isScrollingRef.current = val;
+    };
 
     const name = `${classPrefix}-select`; // t-select
     const [inputValue, onInputChange] = useControlled(props, 'inputValue', props.onInputChange);
@@ -119,12 +122,22 @@ const Select = forwardRefWithStatics(
 
     const handlePopupVisibleChange = (visible: boolean, ctx: PopupVisibleChangeContext) => {
       if (disabled) return;
-      visible ? toggleIsScrolling(false) : onInputChange('', { trigger: 'blur' });
+      if (visible) {
+        isScrollingRef.current = false;
+      } else {
+        onInputChange('', { trigger: 'blur' });
+      }
       setInnerPopupVisible(visible, ctx);
     };
 
     const { currentOptions, setCurrentOptions, tmpPropOptions, valueToOption, selectedOptions, flattenedOptions } =
       useOptions(keys, options, children, valueType, value, reserveKeyword);
+
+    // 清空筛选词时浮层仍在执行退出动画，保留关闭前的列表，避免提前展示全部选项。
+    const lastVisibleOptionsRef = useRef(currentOptions);
+    useLayoutEffect(() => {
+      if (innerPopupVisible) lastVisibleOptionsRef.current = currentOptions;
+    }, [innerPopupVisible, currentOptions]);
 
     const onCheckAllChange = useCallback(
       (checkAll: boolean, e: React.MouseEvent<HTMLLIElement> | React.KeyboardEvent<HTMLInputElement>) => {
@@ -204,7 +217,11 @@ const Select = forwardRefWithStatics(
       const handleRemove = (removeIndex, trigger, e, label) => {
         const values = getSelectValueArr(value, value[removeIndex], true, valueType, keys);
         const { currentSelectedOptions } = getSelectedOptions(values, multiple, valueType, keys, valueToOption);
-        onChange(values, { e, trigger, selectedOptions: currentSelectedOptions });
+        onChange(values, {
+          e,
+          trigger,
+          selectedOptions: currentSelectedOptions,
+        });
         onRemove?.({
           value: value[removeIndex],
           data: {
@@ -301,7 +318,10 @@ const Select = forwardRefWithStatics(
       handlePopupVisibleChange,
       handleChange,
       onCheckAllChange,
-      toggleIsScrolling,
+      toggleIsScrolling: toggleIsScrollingRef,
+      circular: keyboardCircular,
+      onReachTop: onKeyboardReachTop,
+      onReachBottom: onKeyboardReachBottom,
     });
 
     // 处理filter逻辑
@@ -321,7 +341,8 @@ const Select = forwardRefWithStatics(
           return filter(value, option);
         }
         const upperValue = value.toUpperCase();
-        return (option?.label || '').toUpperCase().includes(upperValue);
+        const searchableText = extractTextFromTNode(option.label);
+        return searchableText.toUpperCase().includes(upperValue);
       };
 
       tmpPropOptions?.forEach((option) => {
@@ -357,7 +378,9 @@ const Select = forwardRefWithStatics(
         return;
       }
       if (isFunction(onSearch)) {
-        onSearch(value, { e: context.e as React.KeyboardEvent<HTMLDivElement> });
+        onSearch(value, {
+          e: context.e as React.KeyboardEvent<HTMLDivElement>,
+        });
         return;
       }
     };
@@ -414,7 +437,7 @@ const Select = forwardRefWithStatics(
         showPopup: innerPopupVisible,
         // popup弹出层内容只会在点击事件之后触发 并且无任何透传参数
         setShowPopup: (show: boolean) => handlePopupVisibleChange(show, {}),
-        options: currentOptions,
+        options: innerPopupVisible ? currentOptions : lastVisibleOptionsRef.current,
         empty,
         max,
         loadingText,
@@ -433,12 +456,7 @@ const Select = forwardRefWithStatics(
 
     const renderValueDisplay = useMemo(() => {
       if (!valueDisplay) {
-        if (!multiple) {
-          if (typeof selectedLabel !== 'string') {
-            return selectedLabel;
-          }
-          return '';
-        }
+        if (!multiple) return isValidElement(selectedLabel) ? selectedLabel : undefined;
         return ({ value: val }) =>
           val.slice(0, minCollapsedNum ? minCollapsedNum : val.length).map((_, index: number) => {
             const targetVal = get(selectedOptions[index], valueKey);
@@ -488,7 +506,10 @@ const Select = forwardRefWithStatics(
       if (multiple) {
         return ({ onClose }) => parseContentTNode(valueDisplay, { value: selectedOptions, onClose });
       }
-      return parseContentTNode(valueDisplay, { value: selectedLabel, onClose: noop });
+      return parseContentTNode(valueDisplay, {
+        value: selectedLabel,
+        onClose: noop,
+      });
       // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [
       valueDisplay,
@@ -510,7 +531,7 @@ const Select = forwardRefWithStatics(
 
     // 将第一个选中的 option 置于列表可见范围的最后一位
     const updateScrollTop = (content: HTMLDivElement) => {
-      if (!content || isScrolling) {
+      if (!content || isScrollingRef.current) {
         return;
       }
       const firstSelectedNode: HTMLDivElement = content.querySelector(`.${classPrefix}-is-selected`);
@@ -540,14 +561,13 @@ const Select = forwardRefWithStatics(
     };
 
     const handleScroll = ({ e }: { e: React.WheelEvent<HTMLDivElement> }) => {
-      toggleIsScrolling(true);
+      isScrollingRef.current = true;
 
       onScroll?.({ e });
       if (onScrollToBottom) {
         const debounceOnScrollBottom = debounce((e) => onScrollToBottom({ e }), 100);
-
         const { scrollTop, clientHeight, scrollHeight } = e.target as HTMLDivElement;
-        if (clientHeight + Math.floor(scrollTop) === scrollHeight) {
+        if (Math.abs(scrollHeight - clientHeight - scrollTop) <= 1) {
           debounceOnScrollBottom(e);
         }
       }
@@ -563,7 +583,7 @@ const Select = forwardRefWithStatics(
           autoWidth={!style?.width && autoWidth}
           ref={composeRefs(ref, selectInputRef)}
           className={name}
-          readonly={readOnly}
+          readOnly={readOnly}
           autofocus={props.autofocus}
           allowInput={(filterable ?? local.filterable) || isFunction(filter)}
           multiple={multiple}
@@ -609,7 +629,10 @@ const Select = forwardRefWithStatics(
           onFocus={onFocus}
           onEnter={handleEnter}
           onBlur={(_, context) => {
-            onBlur?.({ value, e: context.e as React.FocusEvent<HTMLDivElement> });
+            onBlur?.({
+              value,
+              e: context.e as React.FocusEvent<HTMLDivElement>,
+            });
           }}
           onClear={handleClear}
           {...selectInputProps}

@@ -1,47 +1,68 @@
-import React, { ReactNode, useRef, useState, useEffect, useCallback, useMemo } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
-  type TdChatMessageConfig,
-  ChatList,
-  ChatSender,
-  ChatMessage,
+  CheckCircleFilledIcon,
+  ChevronRightIcon,
+  CloseCircleFilledIcon,
+  LoadingIcon,
+  PlayCircleIcon,
+  TimeFilledIcon,
+  VideoIcon,
+} from 'tdesign-icons-react';
+import { Card, Steps, Tag } from 'tdesign-react';
+import {
   ChatActionBar,
-  isAIMessage,
-  getMessageContentForCopy,
-  TdChatSenderParams,
+  ChatList,
   ChatLoading,
-  TdChatActionsName,
+  ChatMessage,
+  ChatSender,
+  getMessageContentForCopy,
+  isAIMessage,
+  isToolCallContent,
+  isUserMessage,
   ToolCallRenderer,
   useAgentState,
-  useChat,
   useAgentToolcall,
-  isUserMessage,
+  useChat,
+} from '@tdesign-react/chat';
+
+import type { ReactNode } from 'react';
+import type {
+  AIMessageContent,
   ChatMessagesData,
   ChatRequestParams,
-  AIMessageContent,
+  TdChatActionsName,
+  TdChatMessageConfig,
+  TdChatSenderParams,
   ToolCall,
-  isToolCallContent,
 } from '@tdesign-react/chat';
-import { Steps, Card, Tag } from 'tdesign-react';
-import {
-  PlayCircleIcon,
-  VideoIcon,
-  CheckCircleFilledIcon,
-  CloseCircleFilledIcon,
-  TimeFilledIcon,
-  LoadingIcon,
-  ChevronRightIcon,
-} from 'tdesign-icons-react';
 import type { AgentToolcallConfig, ToolcallComponentProps } from '../components/toolcall/types';
+
 import './videoclipAgent.css';
 
 const { StepItem } = Steps;
 
 // 状态映射
 const statusMap: Record<string, any> = {
-  pending: { theme: 'default', status: 'default', icon: <TimeFilledIcon className="status-icon pending" /> },
-  running: { theme: 'primary', status: 'process', icon: <LoadingIcon className="status-icon running" /> },
-  completed: { theme: 'success', status: 'finish', icon: <CheckCircleFilledIcon className="status-icon success" /> },
-  failed: { theme: 'danger', status: 'error', icon: <CloseCircleFilledIcon className="status-icon failed" /> },
+  pending: {
+    theme: 'default',
+    status: 'default',
+    icon: <TimeFilledIcon className="status-icon pending" />,
+  },
+  running: {
+    theme: 'primary',
+    status: 'process',
+    icon: <LoadingIcon className="status-icon running" />,
+  },
+  completed: {
+    theme: 'success',
+    status: 'finish',
+    icon: <CheckCircleFilledIcon className="status-icon success" />,
+  },
+  failed: {
+    theme: 'danger',
+    status: 'error',
+    icon: <CloseCircleFilledIcon className="status-icon failed" />,
+  },
 };
 
 // 自定义Hook：状态跟踪
@@ -490,7 +511,7 @@ export default function VideoClipAgentChatWithSubscription() {
 
   const { chatEngine, messages, status } = useChat({
     defaultMessages: [],
-    chatServiceConfig: createChatServiceConfig(),
+    chatServiceConfig: createChatServiceConfig() as any,
   });
 
   const senderLoading = React.useMemo(() => status === 'pending' || status === 'streaming', [status]);
@@ -535,7 +556,7 @@ export default function VideoClipAgentChatWithSubscription() {
   const handleToolCallRespond = async <T extends object = any>(toolcall: ToolCall, response: T) => {
     try {
       // 构造新的请求参数
-      const tools = chatEngine.getToolcallByName(toolcall.toolCallName) || {};
+      const tools = (chatEngine as any).getToolcallByName(toolcall.toolCallName) || {};
       const newRequestParams: ChatRequestParams = {
         prompt: inputValue,
         toolCallMessage: {
@@ -565,7 +586,7 @@ export default function VideoClipAgentChatWithSubscription() {
       // 使用统一的 ToolCallRenderer 处理所有工具调用
       return (
         <div slot={`${type}-${index}`} key={`toolcall-${index}`} className="content-card">
-          <ToolCallRenderer toolCall={data} onRespond={handleToolCallRespond} />
+          <ToolCallRenderer toolCall={data as any} onRespond={handleToolCallRespond} />
         </div>
       );
     }
@@ -590,7 +611,7 @@ export default function VideoClipAgentChatWithSubscription() {
         isLast &&
         message.status !== 'stop' && (
           <div slot="actionbar">
-            <ChatLoading animation="dot"></ChatLoading>
+            <ChatLoading animation="dots"></ChatLoading>
           </div>
         )
       )}
@@ -623,7 +644,10 @@ export default function VideoClipAgentChatWithSubscription() {
     <div className="videoclip-agent-container">
       <div className="chat-content">
         {/* 聊天区域 */}
-        <ChatList ref={listRef} style={{ width: '100%', height: '400px' }}>
+        <ChatList
+          ref={listRef}
+          // style={{ width: '100%', height: '400px' }}
+        >
           {messages.map((message, idx) => (
             <ChatMessage key={message.id} {...messageProps[message.role]} message={message as any}>
               {isUserMessage(message) && (

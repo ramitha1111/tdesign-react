@@ -1,4 +1,5 @@
 import React from 'react';
+
 import type { FormItemInstance } from './FormItem';
 import type { InternalFormInstance } from './hooks/interface';
 import type { NamePath, TdFormListProps, TdFormProps } from './type';
@@ -22,6 +23,7 @@ const FormContext = React.createContext<{
   errorMessage: TdFormProps['errorMessage'];
   formMapRef: React.RefObject<Map<any, React.RefObject<FormItemInstance>>>;
   floatingFormDataRef: React.RefObject<Record<any, any>>;
+  registerFormItem?: (node: HTMLElement) => () => void;
   onFormItemValueChange: (changedValue: Record<string, unknown>) => void;
 }>({
   form: undefined,
@@ -43,6 +45,7 @@ const FormContext = React.createContext<{
   onFormItemValueChange: undefined,
   formMapRef: undefined,
   floatingFormDataRef: undefined,
+  registerFormItem: undefined,
 });
 
 export const useFormContext = () => React.useContext(FormContext);

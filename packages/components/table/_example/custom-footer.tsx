@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { Table, Radio, Tag } from 'tdesign-react';
-import { ErrorCircleFilledIcon, CheckCircleFilledIcon, CloseCircleFilledIcon } from 'tdesign-icons-react';
+import { CheckCircleFilledIcon, CloseCircleFilledIcon, ErrorCircleFilledIcon } from 'tdesign-icons-react';
+import { Radio, Table, Tag } from 'tdesign-react';
 
 import type { TableProps } from 'tdesign-react';
 
@@ -36,7 +36,12 @@ const columns: TableProps['columns'] = [
     foot: () => <div style={{ width: '100%' }}>表尾信息 </div>,
   },
   { colKey: 'channel', title: '签署方式', foot: '表尾信息' },
-  { colKey: 'detail.email', title: '邮箱地址', ellipsis: true, foot: () => <div>表尾信息</div> },
+  {
+    colKey: 'detail.email',
+    title: '邮箱地址',
+    ellipsis: true,
+    foot: () => <div>表尾信息</div>,
+  },
   {
     colKey: 'createTime',
     title: '申请时间',

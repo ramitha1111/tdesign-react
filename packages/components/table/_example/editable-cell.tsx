@@ -1,7 +1,8 @@
-import React, { useState, useMemo } from 'react';
-import { Table, Input, Select, DatePicker, MessagePlugin } from 'tdesign-react';
+import React, { useMemo, useState } from 'react';
 import dayjs from 'dayjs';
-import type { PrimaryTableProps, BaseTableProps, TableRowData } from 'tdesign-react';
+import { DatePicker, Input, MessagePlugin, Select, Table } from 'tdesign-react';
+
+import type { BaseTableProps, PrimaryTableProps, TableRowData } from 'tdesign-react';
 
 export default function EditableCellTable() {
   const initData: BaseTableProps['data'] = new Array(5).fill(null).map((_, i) => ({
@@ -127,8 +128,16 @@ export default function EditableCellTable() {
               { label: '宣传物料制作费用', value: '宣传物料制作费用' },
               { label: 'algolia 服务报销', value: 'algolia 服务报销' },
               // 如果状态选择了 已过期，则 Letters 隐藏 G 和 H
-              { label: '相关周边制作费', value: '相关周边制作费', show: () => editedRow.status !== 0 },
-              { label: '激励奖品快递费', value: '激励奖品快递费', show: () => editedRow.status !== 0 },
+              {
+                label: '相关周边制作费',
+                value: '相关周边制作费',
+                show: () => editedRow.status !== 0,
+              },
+              {
+                label: '激励奖品快递费',
+                value: '激励奖品快递费',
+                show: () => editedRow.status !== 0,
+              },
             ].filter((t) => (t.show === undefined ? true : t.show())),
           }),
           // abortEditOnEvent: ['onChange'],

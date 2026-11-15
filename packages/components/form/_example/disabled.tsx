@@ -1,21 +1,22 @@
 import React, { useState } from 'react';
 import {
+  Button,
+  Cascader,
+  Checkbox,
+  DatePicker,
   Form,
   Input,
   InputNumber,
-  Checkbox,
-  Button,
   MessagePlugin,
   Radio,
-  DatePicker,
-  Switch,
-  TreeSelect,
   Select,
-  Upload,
-  Cascader,
-  Textarea,
   Space,
+  Switch,
+  Textarea,
+  TreeSelect,
+  Upload,
 } from 'tdesign-react';
+
 import type { FormProps } from 'tdesign-react';
 
 const { FormItem } = Form;
@@ -31,7 +32,13 @@ const INITIAL_DATA = {
   address2: 2,
   gradePoint: 0,
   date: '',
-  avatar: [{ url: 'https://tdesign.gtimg.com/site/avatar.jpg', name: 'avatar.jpg', status: 'success' }],
+  avatar: [
+    {
+      url: 'https://tdesign.gtimg.com/site/avatar.jpg',
+      name: 'avatar.jpg',
+      status: 'success',
+    },
+  ],
 };
 
 const COLLEGE_OPTIONS = [

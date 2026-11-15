@@ -1,18 +1,18 @@
 import React, { useCallback, useMemo, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { isFunction, isNumber } from 'lodash-es';
-
 import { formatImages } from '@tdesign/common-js/image-viewer/utils';
+
 import { canUseDocument } from '../_util/dom';
 import useAttach from '../hooks/useAttach';
 import useControlled from '../hooks/useControlled';
 import useDefaultProps from '../hooks/useDefaultProps';
-import { ImageModal } from './ImageViewerModal';
 import { imageViewerDefaultProps } from './defaultProps';
+import { DefaultTrigger } from './defaultTrigger';
 import useImageScale from './hooks/useImageScale';
 import useIndex from './hooks/useIndex';
 import useViewerScale from './hooks/useViewerScale';
-import { DefaultTrigger } from './defaultTrigger';
+import { ImageModal } from './ImageViewerModal';
 
 import type { StyledProps, TNode } from '../common';
 import type { ImageModalProps } from './ImageViewerModal';
@@ -22,7 +22,18 @@ export interface ImageViewerProps extends TdImageViewerProps, StyledProps {}
 
 const ImageViewer: React.FC<ImageViewerProps> = (originalProps) => {
   const props = useDefaultProps<ImageViewerProps>(originalProps, imageViewerDefaultProps);
-  const { attach, mode, trigger, images, title, imageScale: imageScaleD, viewerScale: viewerScaleD } = props;
+  const {
+    attach,
+    mode,
+    trigger,
+    images,
+    title,
+    imageScale: imageScaleD,
+    viewerScale: viewerScaleD,
+    className,
+    style,
+    innerClassName,
+  } = props;
 
   const imageViewerAttach = useAttach('imageViewer', attach);
   const [visible, setVisible] = useControlled(props, 'visible', (visible, context) => {
@@ -88,6 +99,7 @@ const ImageViewer: React.FC<ImageViewerProps> = (originalProps) => {
       {(visibled || visible) &&
         createPortal(
           <ImageModal
+            innerClassName={innerClassName}
             title={title}
             visible={visible}
             images={imageList}
@@ -107,6 +119,8 @@ const ImageViewer: React.FC<ImageViewerProps> = (originalProps) => {
             onClose={close}
             onOpen={open}
             imageReferrerpolicy={props.imageReferrerpolicy}
+            className={className}
+            style={style}
           />,
           attachElement,
         )}

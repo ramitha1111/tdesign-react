@@ -1,13 +1,16 @@
-import React, { useMemo, useState, useRef, MouseEvent, useEffect, useImperativeHandle, forwardRef } from 'react';
+import React, { forwardRef, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react';
 import classNames from 'classnames';
-import { isFunction, escapeRegExp } from 'lodash-es';
+import { escapeRegExp, isFunction } from 'lodash-es';
 import log from '@tdesign/common-js/log/index';
-import useConfig from '../hooks/useConfig';
-import { CommonClassNameType } from '../hooks/useCommonClassName';
-import { AutoCompleteOptionObj, TdAutoCompleteProps } from './type';
-import HighlightOption from './HighlightOption';
-import { useLocaleReceiver } from '../locale/LocalReceiver';
+
 import { off, on } from '../_util/listener';
+import useConfig from '../hooks/useConfig';
+import { useLocaleReceiver } from '../locale/LocalReceiver';
+import HighlightOption from './HighlightOption';
+
+import type { MouseEvent } from 'react';
+import type { CommonClassNameType } from '../hooks/useCommonClassName';
+import type { AutoCompleteOptionObj, TdAutoCompleteProps } from './type';
 
 export interface OptionsListProps {
   sizeClassNames: CommonClassNameType['sizeClassNames'];
@@ -75,7 +78,7 @@ const OptionsList = forwardRef<OptionsListRef, OptionsListProps>((props: Options
 
     return options;
     // eslint-disable-next-line
-  }, [props.options, value, props.filterable]);
+    }, [props.options, value, props.filterable]);
 
   const onOptionClick = (e: MouseEvent<HTMLLIElement>) => {
     let liNode = e.target as HTMLElement;
@@ -132,7 +135,7 @@ const OptionsList = forwardRef<OptionsListRef, OptionsListProps>((props: Options
       removeKeyboardListener();
     };
     // eslint-disable-next-line
-  }, [popupVisible]);
+    }, [popupVisible]);
 
   useEffect(() => {
     if (!value) {

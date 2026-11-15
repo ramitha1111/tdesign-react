@@ -1,7 +1,9 @@
 import React, { useMemo } from 'react';
-import { DropdownOption } from '../type';
-import DropdownMenu from '../DropdownMenu';
+
 import DropdownItem from '../DropdownItem';
+import DropdownMenu from '../DropdownMenu';
+
+import type { DropdownOption } from '../type';
 
 export const getOptionsFromChildren = (children: React.ReactElement<any>): DropdownOption[] => {
   if (!children) return [];
@@ -28,7 +30,11 @@ export const getOptionsFromChildren = (children: React.ReactElement<any>): Dropd
           children: childrenCtx.length > 0 ? getOptionsFromChildren(groupChildren[1]) : null,
         };
       }
-      return { ...item.props, content: groupChildren || contextRes, children: null };
+      return {
+        ...item.props,
+        content: groupChildren || contextRes,
+        children: null,
+      };
     })
     .filter((v) => !!v.content);
 };

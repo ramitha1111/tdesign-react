@@ -1,15 +1,18 @@
-import { useState, useEffect } from 'react';
+import { useEffect, useMemo, useState } from 'react';
+import { isObject } from 'lodash-es';
 import {
-  isValidDate,
+  extractTimeFormat,
   formatDate,
   formatTime,
   getDefaultFormat,
   initYearMonthTime,
-  extractTimeFormat,
+  isValidDate,
 } from '@tdesign/common-js/date-picker/format';
 import log from '@tdesign/common-js/log/index';
+
 import useControlled from '../../hooks/useControlled';
-import { TdDateRangePickerProps } from '../type';
+
+import type { TdDateRangePickerProps } from '../type';
 
 export const PARTIAL_MAP = { first: 'start', second: 'end' };
 
@@ -39,13 +42,30 @@ export default function useRange(props: TdDateRangePickerProps) {
 
   const [isFirstValueSelected, setIsFirstValueSelected] = useState(false); // 记录面板点击次数，两次后才自动关闭
   const [time, setTime] = useState(
-    () => initYearMonthTime({ value, mode: props.mode, format, enableTimePicker: props.enableTimePicker }).time,
+    () =>
+      initYearMonthTime({
+        value,
+        mode: props.mode,
+        format,
+        enableTimePicker: props.enableTimePicker,
+      }).time,
   );
   const [month, setMonth] = useState<Array<number>>(
-    () => initYearMonthTime({ value, mode: props.mode, format, enableTimePicker: props.enableTimePicker }).month,
+    () =>
+      initYearMonthTime({
+        value,
+        mode: props.mode,
+        format,
+        enableTimePicker: props.enableTimePicker,
+      }).month,
   );
   const [year, setYear] = useState<Array<number>>(() => initYearMonthTime({ value, mode: props.mode, format }).year);
   const [cacheValue, setCacheValue] = useState(() => formatDate(value, { format })); // 缓存选中值，panel 点击时更改
+
+  const isSwitchTimeMode = useMemo(
+    () => isObject(props.enableTimePicker) && props.enableTimePicker.mode === 'switch',
+    [props.enableTimePicker],
+  );
 
   // 输入框响应 value 变化
   useEffect(() => {
@@ -73,5 +93,6 @@ export default function useRange(props: TdDateRangePickerProps) {
     setIsFirstValueSelected,
     cacheValue,
     setCacheValue,
+    isSwitchTimeMode,
   };
 }

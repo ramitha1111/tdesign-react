@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { TreeSelect, Space } from 'tdesign-react';
+import { Space, TreeSelect } from 'tdesign-react';
 
 import type { TreeSelectProps, TreeSelectValue } from 'tdesign-react';
 
@@ -35,7 +35,10 @@ const options: TreeSelectProps['data'] = [
 ];
 
 export default function Example() {
-  const [value, setValue] = useState<TreeSelectValue>({ label: '深圳市', value: 'shenzhen' });
+  const [value, setValue] = useState<TreeSelectValue>({
+    label: '深圳市',
+    value: 'shenzhen',
+  });
   const [mulValue, setMulValue] = useState<TreeSelectValue>([
     { label: '广州市', value: 'guangzhou' },
     { label: '深圳市', value: 'shenzhen' },

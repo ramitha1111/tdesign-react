@@ -1,12 +1,15 @@
-import React, { CSSProperties, useRef } from 'react';
-import { isFunction, get } from 'lodash-es';
+import React, { useRef } from 'react';
 import classNames from 'classnames';
-import { BaseTableCellParams, RowspanColspan, TableRowData, TdBaseTableProps } from './type';
-import { formatRowAttributes, formatRowClassNames } from './utils';
-import { RowAndColFixedPosition } from './interface';
+import { get, isFunction } from 'lodash-es';
+
+import useClassName from './hooks/useClassName';
 import { getColumnFixedStyles } from './hooks/useFixed';
 import useRowspanAndColspan, { getCellKey } from './hooks/useRowspanAndColspan';
-import useClassName from './hooks/useClassName';
+import { formatRowAttributes, formatRowClassNames } from './utils';
+
+import type { CSSProperties } from 'react';
+import type { RowAndColFixedPosition } from './interface';
+import type { BaseTableCellParams, RowspanColspan, TableRowData, TdBaseTableProps } from './type';
 
 export interface TFootProps {
   rowKey: string;
@@ -48,7 +51,11 @@ export default function TFoot(props: TFootProps) {
   if (!columns) return null;
 
   const footerDomList = footData?.map((row, rowIndex) => {
-    const trAttributes = formatRowAttributes(props.rowAttributes, { row, rowIndex, type: 'foot' });
+    const trAttributes = formatRowAttributes(props.rowAttributes, {
+      row,
+      rowIndex,
+      type: 'foot',
+    });
     // 自定义行类名
     const customClasses = formatRowClassNames(
       props.rowClassName,

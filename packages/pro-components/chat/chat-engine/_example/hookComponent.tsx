@@ -1,24 +1,30 @@
-import React, { ReactNode, useMemo, useRef, useState } from 'react';
+import React, { useMemo, useRef, useState } from 'react';
 import { Avatar } from 'tdesign-react';
 import {
-  type SSEChunkData,
-  type TdChatMessageConfig,
-  type AIMessageContent,
-  type ChatRequestParams,
-  type ChatMessagesData,
-  ChatList,
-  ChatSender,
-  ChatMessage,
-  TdChatListApi,
-  TdChatSenderApi,
   ChatActionBar,
-  isAIMessage,
-  getMessageContentForCopy,
-  TdChatSenderParams,
+  ChatList,
   ChatLoading,
-  TdChatActionsName,
+  ChatMessage,
+  ChatSender,
+  getMessageContentForCopy,
+  isAIMessage,
 } from '@tdesign-react/chat';
+
 import { useChat } from '../index';
+
+import type { ReactNode } from 'react';
+import type {
+  AIMessageContent,
+  ChatMessagesData,
+  ChatMessageStatus,
+  ChatRequestParams,
+  SSEChunkData,
+  TdChatActionsName,
+  TdChatListApi,
+  TdChatMessageConfig,
+  TdChatSenderApi,
+  TdChatSenderParams,
+} from '@tdesign-react/chat';
 
 export default function ComponentsBuild() {
   const listRef = useRef<TdChatListApi>(null);
@@ -59,7 +65,7 @@ export default function ComponentsBuild() {
           case 'think':
             return {
               type: 'thinking',
-              status: (status) => (/耗时/.test(rest?.title) ? 'complete' : status),
+              status: (/耗时/.test(rest?.title) ? 'complete' : status) as ChatMessageStatus,
               data: {
                 title: rest.title || '深度思考中',
                 text: rest.content || '',
@@ -176,7 +182,10 @@ export default function ComponentsBuild() {
 
   return (
     <div style={{ height: '600px', display: 'flex', flexDirection: 'column' }} className="accessible-chat">
-      <ChatList ref={listRef} style={{ width: '100%' }}>
+      <ChatList
+        ref={listRef as any}
+        // style={{ width: '100%' }}
+      >
         {messages.map((message, idx) => (
           <ChatMessage key={message.id} {...messageProps[message.role]} message={message}>
             {renderMsgContents(message, idx === messages.length - 1)}
@@ -184,8 +193,8 @@ export default function ComponentsBuild() {
         ))}
       </ChatList>
       <ChatSender
-        ref={inputRef}
-        className="my-chat-sender"
+        ref={inputRef as any}
+        // className="my-chat-sender"
         value={inputValue}
         placeholder="请输入内容"
         loading={senderLoading}

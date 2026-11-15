@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import { SelectInput } from 'tdesign-react';
+import React, { useEffect, useState } from 'react';
 import { ChevronDownIcon } from 'tdesign-icons-react';
+import { SelectInput } from 'tdesign-react';
 
 import type { SelectInputProps } from 'tdesign-react';
 
@@ -43,7 +43,10 @@ const OPTIONS = [
 
 export default function SelectInputSingle() {
   // const selectValue = useState('tdesign-vue');
-  const [selectValue, setSelectValue] = useState({ label: 'tdesign-vue', value: 1 });
+  const [selectValue, setSelectValue] = useState({
+    label: 'tdesign-vue',
+    value: 1,
+  });
   // const selectValue = useState([{ label: 'tdesign-vue', value: 1 }]);
 
   const [popupVisible, setPopupVisible] = useState(false);

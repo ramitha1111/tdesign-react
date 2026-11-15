@@ -1,7 +1,16 @@
-import path from 'path';
+import path, { dirname } from 'path';
+import { fileURLToPath } from 'url';
+
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
+
+import pkg from '../package.json';
 import tdocPlugin from './plugin-tdoc';
+import changelog2Json from './plugins/changelog-to-json';
+import generateLlms from './plugins/generate-llms';
+
+// eslint-disable-next-line no-underscore-dangle
+const __dirname = dirname(fileURLToPath(import.meta.url));
 
 const publicPathMap = {
   preview: '/',
@@ -22,6 +31,9 @@ const disableTreeShakingPlugin = (paths) => ({
 export default ({ mode }) =>
   defineConfig({
     base: publicPathMap[mode],
+    define: {
+      __VERSION__: JSON.stringify(pkg.version),
+    },
     resolve: {
       alias: {
         '@tdesign-react/chat': path.resolve(__dirname, '../../pro-components/chat'),
@@ -29,6 +41,8 @@ export default ({ mode }) =>
         'tdesign-react/es': path.resolve(__dirname, '../../components'),
         'tdesign-react': path.resolve(__dirname, '../../components'),
       },
+      // 添加 dedupe，强制使用子包中的依赖
+      dedupe: ['tdesign-web-components'],
     },
     build: {
       rollupOptions: {
@@ -51,5 +65,5 @@ export default ({ mode }) =>
     test: {
       environment: 'jsdom',
     },
-    plugins: [react(), tdocPlugin(), disableTreeShakingPlugin(['style/'])],
+    plugins: [react(), tdocPlugin(), changelog2Json(), generateLlms(), disableTreeShakingPlugin(['style/'])],
   });

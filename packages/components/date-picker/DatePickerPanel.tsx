@@ -1,18 +1,20 @@
 import React, { forwardRef } from 'react';
 import dayjs from 'dayjs';
 import { formatDate, getDefaultFormat, parseToDayjs } from '@tdesign/common-js/date-picker/format';
-import { subtractMonth, addMonth, extractTimeObj } from '@tdesign/common-js/date-picker/utils';
-import { StyledProps } from '../common';
-import {
-  TdDatePickerPanelProps,
-  DateValue,
-  DatePickerYearChangeTrigger,
-  DatePickerMonthChangeTrigger,
-  PresetDate,
-} from './type';
-import SinglePanel from './panel/SinglePanel';
-import useSingleValue from './hooks/useSingleValue';
+import { addMonth, extractTimeObj, subtractMonth } from '@tdesign/common-js/date-picker/utils';
+
 import useDefaultProps from '../hooks/useDefaultProps';
+import useSingleValue from './hooks/useSingleValue';
+import SinglePanel from './panel/SinglePanel';
+
+import type { StyledProps } from '../common';
+import type {
+  DatePickerMonthChangeTrigger,
+  DatePickerYearChangeTrigger,
+  DateValue,
+  PresetDate,
+  TdDatePickerPanelProps,
+} from './type';
 
 export interface DatePickerPanelProps extends TdDatePickerPanelProps, StyledProps {}
 
@@ -59,14 +61,23 @@ const DatePickerPanel = forwardRef<HTMLDivElement, DatePickerPanelProps>((origin
     if (enableTimePicker) {
       setCacheValue(formatDate(date, { format }));
     } else {
-      onChange(formatDate(date, { format }), { dayjsValue: parseToDayjs(date, format), trigger: 'pick' });
+      onChange(formatDate(date, { format }), {
+        dayjsValue: parseToDayjs(date, format),
+        trigger: 'pick',
+      });
     }
   }
 
   // 头部快速切换
   function onJumperClick({ trigger }) {
     const triggerMap = { prev: 'arrow-previous', next: 'arrow-next' };
-    const monthCountMap = { date: 1, week: 1, month: 12, quarter: 12, year: 120 };
+    const monthCountMap = {
+      date: 1,
+      week: 1,
+      month: 12,
+      quarter: 12,
+      year: 120,
+    };
     const monthCount = monthCountMap[mode] || 0;
 
     const current = new Date(year, month);

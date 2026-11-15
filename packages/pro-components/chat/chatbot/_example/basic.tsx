@@ -1,17 +1,18 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 import React, { useEffect, useRef, useState } from 'react';
 import { InternetIcon } from 'tdesign-icons-react';
-import {
-  SSEChunkData,
-  AIMessageContent,
-  TdChatMessageConfigItem,
-  ChatRequestParams,
-  ChatMessagesData,
-  ChatServiceConfig,
-  ChatBot,
-  type TdChatbotApi,
-} from '@tdesign-react/chat';
 import { Button, Space } from 'tdesign-react';
+import { ChatBot } from '@tdesign-react/chat';
+
+import type {
+  AIMessageContent,
+  ChatMessagesData,
+  ChatRequestParams,
+  ChatServiceConfig,
+  SSEChunkData,
+  TdChatbotApi,
+  TdChatMessageConfigItem,
+} from '@tdesign-react/chat';
 
 // 默认初始化消息
 const mockData: ChatMessagesData[] = [
@@ -47,13 +48,16 @@ export default function chatSample() {
   const [activeR1, setR1Active] = useState(false);
   const [activeSearch, setSearchActive] = useState(false);
   const [ready, setReady] = useState(false);
-  const reqParamsRef = useRef<{ think: boolean; search: boolean }>({ think: false, search: false });
+  const reqParamsRef = useRef<{ think: boolean; search: boolean }>({
+    think: false,
+    search: false,
+  });
 
   // 消息属性配置
   const messageProps = (msg: ChatMessagesData): TdChatMessageConfigItem => {
     const { role, content } = msg;
     // 假设只有单条thinking
-    const thinking = content.find((item) => item.type === 'thinking');
+    const thinking = content.find((item) => (item.type as any) === 'thinking');
     if (role === 'user') {
       return {
         variant: 'base',
@@ -189,7 +193,7 @@ export default function chatSample() {
         senderProps={{
           placeholder: '有问题，尽管问～ Enter 发送，Shift+Enter 换行',
         }}
-        chatServiceConfig={chatServiceConfig}
+        chatServiceConfig={chatServiceConfig as any}
         onChatReady={() => {
           setReady(true);
         }}

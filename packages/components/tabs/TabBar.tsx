@@ -1,8 +1,11 @@
-import React, { useEffect, useState, CSSProperties, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import classNames from 'classnames';
+
 import useConfig from '../hooks/useConfig';
 import useMutationObserver from '../hooks/useMutationObserver';
 import useResizeObserver from '../hooks/useResizeObserver';
+
+import type { CSSProperties } from 'react';
 
 interface TabBarProps {
   tabPosition: string;
@@ -39,11 +42,17 @@ const TabBar: React.FC<TabBarProps> = (props) => {
         });
         const computedItem = itemsRef[currentActiveIdRef.current];
         if (!computedItem) {
-          setBarStyle({ transform: `${transformPosition}(${0}px)`, [barBorderProp]: 0 });
+          setBarStyle({
+            transform: `${transformPosition}(${0}px)`,
+            [barBorderProp]: 0,
+          });
           return;
         }
         const itemPropValue = getComputedStyle(computedItem)[itemProp];
-        setBarStyle({ transform: `${transformPosition}(${offset}px)`, [barBorderProp]: itemPropValue || 0 });
+        setBarStyle({
+          transform: `${transformPosition}(${offset}px)`,
+          [barBorderProp]: itemPropValue || 0,
+        });
       }
     }
   }, [currentActiveIdRef, containerRef, tabPosition, tabsClassPrefix]);

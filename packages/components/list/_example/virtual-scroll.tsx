@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Button, List, Space } from 'tdesign-react';
+
 import type { ListInstanceFunctions } from 'tdesign-react';
 
 const { ListItem, ListItemMeta } = List;
@@ -31,7 +32,12 @@ const VirtualScroll = () => {
       <List
         ref={listRef}
         style={{ height: '300px' }}
-        scroll={{ type: 'virtual', rowHeight: 80, bufferSize: 10, threshold: 10 }}
+        scroll={{
+          type: 'virtual',
+          rowHeight: 80,
+          bufferSize: 10,
+          threshold: 10,
+        }}
       >
         {data.map((item, index) => (
           <ListItem key={index}>

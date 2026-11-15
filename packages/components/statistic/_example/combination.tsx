@@ -1,6 +1,6 @@
 import React from 'react';
-import { Space, Statistic, Card, Divider } from 'tdesign-react';
 import { IconFont } from 'tdesign-icons-react';
+import { Card, Divider, Space, Statistic } from 'tdesign-react';
 
 const CombinationStatistic = () => {
   const iconStyle = {
@@ -34,14 +34,23 @@ const CombinationStatistic = () => {
               <Space direction="vertical" size={0}>
                 <Space align="center" size={7}>
                   <div style={{ width: '120px' }}>the day before</div>
-                  <IconFont name="arrow-up" style={{ color: '#d54941', fontSize: 'var(--td-font-size-body-large)' }} />
+                  <IconFont
+                    name="arrow-up"
+                    style={{
+                      color: '#d54941',
+                      fontSize: 'var(--td-font-size-body-large)',
+                    }}
+                  />
                   9%
                 </Space>
                 <Space align="center" size={7}>
                   <div style={{ width: '120px' }}>last week</div>
                   <IconFont
                     name="arrow-down"
-                    style={{ color: '#2ba471', fontSize: 'var(--td-font-size-body-large)' }}
+                    style={{
+                      color: '#2ba471',
+                      fontSize: 'var(--td-font-size-body-large)',
+                    }}
                   />
                   9%
                 </Space>

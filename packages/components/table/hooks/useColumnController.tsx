@@ -1,20 +1,24 @@
 /**
  * 自定义显示列控制器，即列配置
  */
-import React, { useEffect, ChangeEvent, useRef } from 'react';
-import { SettingIcon as TdSettingIcon } from 'tdesign-icons-react';
-import { intersection, xorWith } from 'lodash-es';
+import React, { useEffect, useRef } from 'react';
 import classNames from 'classnames';
-import Checkbox, { CheckboxGroupValue, CheckboxOptionObj, CheckboxGroupChangeContext } from '../../checkbox';
-import { DialogPlugin } from '../../dialog/plugin';
-import { renderTitle } from './useTableHeader';
-import { PrimaryTableCol, TdPrimaryTableProps } from '../type';
-import useConfig from '../../hooks/useConfig';
-import useGlobalIcon from '../../hooks/useGlobalIcon';
-import useControlled from '../../hooks/useControlled';
-import { getCurrentRowByKey } from '../utils';
-import { DialogInstance } from '../../dialog';
+import { intersection, xorWith } from 'lodash-es';
+import { SettingIcon as TdSettingIcon } from 'tdesign-icons-react';
+
 import TButton from '../../button';
+import Checkbox from '../../checkbox';
+import { DialogPlugin } from '../../dialog/plugin';
+import useConfig from '../../hooks/useConfig';
+import useControlled from '../../hooks/useControlled';
+import useGlobalIcon from '../../hooks/useGlobalIcon';
+import { getCurrentRowByKey } from '../utils';
+import { renderTitle } from './useTableHeader';
+
+import type { ChangeEvent } from 'react';
+import type { CheckboxGroupChangeContext, CheckboxGroupValue, CheckboxOptionObj } from '../../checkbox';
+import type { DialogInstance } from '../../dialog';
+import type { PrimaryTableCol, TdPrimaryTableProps } from '../type';
 
 const CheckboxGroup = Checkbox.Group;
 
@@ -101,7 +105,11 @@ export default function useColumnController(
         .filter((t) => t.disabled)
         .map((t) => t.value);
       columnCheckboxKeys.current = disabledColKeys;
-      props.onColumnChange?.({ type: 'uncheck', columns: disabledColKeys, e: ctx.e });
+      props.onColumnChange?.({
+        type: 'uncheck',
+        columns: disabledColKeys,
+        e: ctx.e,
+      });
     }
     dialogInstance.current.update({ body: getDialogContent() });
   };
@@ -167,7 +175,9 @@ export default function useColumnController(
         if (columnControllerVisible === undefined) {
           dialogInstance.current.hide();
         } else {
-          props.onColumnControllerVisibleChange?.(false, { trigger: 'confirm' });
+          props.onColumnControllerVisibleChange?.(false, {
+            trigger: 'confirm',
+          });
         }
       },
       ...(columnController?.dialogProps || {}),

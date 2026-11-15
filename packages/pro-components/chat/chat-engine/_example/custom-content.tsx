@@ -1,26 +1,28 @@
-import React, { useEffect, useRef, useState, ReactNode } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   BrowseIcon,
-  Filter3Icon,
-  ImageAddIcon,
-  Transform1Icon,
   CopyIcon,
   EditIcon,
+  Filter3Icon,
+  ImageAddIcon,
   SoundIcon,
+  Transform1Icon,
 } from 'tdesign-icons-react';
+import { Button, Dropdown, Image, ImageViewer, MessagePlugin, Skeleton, Space } from 'tdesign-react';
+import { ChatList, ChatMessage, ChatSender, isAIMessage, useChat } from '@tdesign-react/chat';
+
+import type { ReactNode } from 'react';
 import type {
-  SSEChunkData,
   AIMessageContent,
-  ChatRequestParams,
+  ChatBaseContent,
   ChatMessagesData,
+  ChatRequestParams,
   ChatServiceConfig,
+  SSEChunkData,
   TdAttachmentItem,
   TdChatSenderParams,
-  UploadFile,
-  ChatBaseContent,
 } from '@tdesign-react/chat';
-import { ImageViewer, Skeleton, ImageViewerProps, Button, Dropdown, Space, Image, MessagePlugin } from 'tdesign-react';
-import { useChat, ChatList, ChatMessage, ChatSender, isAIMessage } from '@tdesign-react/chat';
+import type { ImageViewerProps, UploadFile } from 'tdesign-react';
 
 /**
  * 自定义内容渲染示例 - AI 生图助手
@@ -111,7 +113,7 @@ const BasicImageViewer = ({ images }) => {
                 alignItems: 'center',
                 justifyContent: 'center',
               }}
-              onClick={open}
+              onClick={() => open()}
             >
               <span>
                 <BrowseIcon size="16px" name={'browse'} /> 预览
@@ -208,7 +210,10 @@ export default function CustomContent() {
   const senderRef = useRef<any>(null);
   const [ratio, setRatio] = useState(0);
   const [style, setStyle] = useState('');
-  const reqParamsRef = useRef<{ ratio: number; style: string; file?: string }>({ ratio: 0, style: '' });
+  const reqParamsRef = useRef<{ ratio: number; style: string; file?: string }>({
+    ratio: 0,
+    style: '',
+  });
   const [files, setFiles] = useState<TdAttachmentItem[]>([]);
   const [inputValue, setInputValue] = useState('请为 TDesign 设计三张品牌宣传图');
 
@@ -315,7 +320,7 @@ export default function CustomContent() {
     }, 风格：${style ? StyleOptions.filter((item) => item.value === style)[0].content : '默认风格'}`;
 
     await chatEngine.sendUserMessage({
-      attachments,
+      attachments: attachments as any,
       prompt: enhancedPrompt,
     });
     setInputValue('');
@@ -386,7 +391,9 @@ export default function CustomContent() {
   return (
     <div style={{ height: '400px', display: 'flex', flexDirection: 'column' }}>
       <div style={{ flex: 1, overflow: 'auto' }}>
-        <ChatList messages={messages}>
+        <ChatList
+        //  messages={messages}
+        >
           {messages.map((message) => (
             <ChatMessage
               key={message.id}

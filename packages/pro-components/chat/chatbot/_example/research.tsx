@@ -1,17 +1,18 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 import React, { useRef, useState } from 'react';
+import { ChatBot } from '@tdesign-react/chat';
+
 import type {
-  SSEChunkData,
   AIMessageContent,
   ChatMessagesData,
-  ChatServiceConfig,
-  TdAttachmentItem,
-  UploadFile,
   ChatRequestParams,
-  TdChatMessageConfig,
+  ChatServiceConfig,
+  SSEChunkData,
+  TdAttachmentItem,
   TdChatbotApi,
+  TdChatMessageConfig,
 } from '@tdesign-react/chat';
-import { ChatBot } from '@tdesign-react/chat';
+import type { UploadFile } from 'tdesign-react';
 
 // 默认初始化消息
 const mockData: ChatMessagesData[] = [
@@ -165,7 +166,7 @@ export default function chatSample() {
           onFileSelect,
           onFileRemove,
         }}
-        chatServiceConfig={chatServiceConfig}
+        chatServiceConfig={chatServiceConfig as any}
       ></ChatBot>
     </div>
   );

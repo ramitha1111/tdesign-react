@@ -1,10 +1,11 @@
 import React, { useEffect } from 'react';
-import { get, has, isEmpty, unset } from 'lodash-es';
+import { get, has, isEmpty, isEqual, isNil, unset } from 'lodash-es';
 
-import { useFormContext, useFormListContext } from '../FormContext';
-import { FormItemProps } from '../FormItem';
 import { TD_DEFAULT_VALUE_MAP } from '../const';
+import { useFormContext, useFormListContext } from '../FormContext';
+import { convertNameToArray } from '../utils';
 
+import type { FormItemProps } from '../FormItem';
 import type { NamePath } from '../type';
 
 export default function useFormItemInitialData(
@@ -16,23 +17,29 @@ export default function useFormItemInitialData(
   let hadReadFloatingFormData = false;
 
   const { form, floatingFormDataRef, initialData: formContextInitialData } = useFormContext();
-  const { name: formListName, initialData: formListInitialData } = useFormListContext();
+  const { name: rawFormListName, initialData: formListInitialData, form: formOfFormList } = useFormListContext();
+
+  const isSameForm = isEqual(form, formOfFormList);
+  const formListName = isSameForm ? rawFormListName : undefined;
+
+  const hasName = !isNil(name);
+  const isFormList = !isNil(formListName) && Array.isArray(fullPath);
+  const fullPathKey = String(fullPath);
 
   // 组件渲染后删除对应游离值
   useEffect(() => {
     if (hadReadFloatingFormData) {
-      const nameList = formListName ? [formListName, name].flat() : name;
-      unset(floatingFormDataRef.current, nameList);
+      unset(floatingFormDataRef.current, fullPath);
     }
-  }, [hadReadFloatingFormData, floatingFormDataRef, formListName, name]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [hadReadFloatingFormData, floatingFormDataRef, fullPathKey]);
 
   const defaultInitialData = getDefaultInitialData(children, initialData);
 
-  // 优先级：floatFormData > FormItem.initialData > FormList.initialData > Form.initialData
+  // 优先级：floatFormData > store > FormItem.initialData > FormList.initialData > Form.initialData
   function getDefaultInitialData(children: FormItemProps['children'], initialData: FormItemProps['initialData']) {
-    if (name && floatingFormDataRef?.current && !isEmpty(floatingFormDataRef.current)) {
-      const nameList = formListName ? [formListName, name].flat() : name;
-      const defaultInitialData = get(floatingFormDataRef.current, nameList);
+    if (hasName && floatingFormDataRef?.current && !isEmpty(floatingFormDataRef.current)) {
+      const defaultInitialData = get(floatingFormDataRef.current, fullPath);
       if (typeof defaultInitialData !== 'undefined') {
         // 首次渲染
         hadReadFloatingFormData = true;
@@ -41,10 +48,16 @@ export default function useFormItemInitialData(
     }
 
     if (typeof initialData !== 'undefined') {
+      if (isFormList) {
+        const storeValue = get(form.store, fullPath);
+        if (typeof storeValue !== 'undefined') {
+          return storeValue;
+        }
+      }
       return initialData;
     }
 
-    if (formListName && Array.isArray(fullPath)) {
+    if (isFormList) {
       const pathPrefix = fullPath.slice(0, -1);
       const pathExisted = has(form.store, pathPrefix);
       if (pathExisted) {
@@ -55,17 +68,15 @@ export default function useFormItemInitialData(
       }
     }
 
-    if (Array.isArray(name) && formListInitialData?.length) {
-      let defaultInitialData;
-      const [index, ...relativePath] = name;
-      if (formListInitialData[index]) {
-        defaultInitialData = get(formListInitialData[index], relativePath);
-      }
+    // FormList.initialData 是当前列表的数据，name 是相对当前列表的路径
+    // 既可能是 [index, ...relativePath]，也可能是纯索引
+    if (isFormList && hasName && formListInitialData?.length) {
+      const defaultInitialData = get(formListInitialData, convertNameToArray(name));
       if (typeof defaultInitialData !== 'undefined') return defaultInitialData;
     }
 
-    if (name && formContextInitialData) {
-      const defaultInitialData = get(formContextInitialData, name);
+    if (hasName && formContextInitialData) {
+      const defaultInitialData = get(formContextInitialData, isFormList ? fullPath : name);
       if (typeof defaultInitialData !== 'undefined') return defaultInitialData;
     }
 
@@ -73,7 +84,8 @@ export default function useFormItemInitialData(
       const childList = React.Children.toArray(children);
       const lastChild = childList[childList.length - 1];
       if (lastChild && React.isValidElement(lastChild)) {
-        const isMultiple = lastChild?.props?.multiple;
+        const childProps = lastChild.props as { multiple?: boolean };
+        const isMultiple = childProps.multiple;
         // @ts-ignore
         const componentName = lastChild.type.displayName;
         return isMultiple ? [] : TD_DEFAULT_VALUE_MAP.get(componentName);

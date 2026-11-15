@@ -1,15 +1,18 @@
 import React, { isValidElement, useState } from 'react';
 import classNames from 'classnames';
 import { omit } from 'lodash-es';
-import { DropdownOption, TdDropdownProps } from './type';
-import { StyledProps } from '../common';
-import Popup, { PopupVisibleChangeContext } from '../popup';
-import DropdownMenu from './DropdownMenu';
-import DropdownItem from './DropdownItem';
-import { dropdownDefaultProps } from './defaultProps';
+
 import useConfig from '../hooks/useConfig';
-import useDropdownOptions from './hooks/useDropdownOptions';
 import useDefaultProps from '../hooks/useDefaultProps';
+import Popup from '../popup';
+import { dropdownDefaultProps } from './defaultProps';
+import DropdownItem from './DropdownItem';
+import DropdownMenu from './DropdownMenu';
+import useDropdownOptions from './hooks/useDropdownOptions';
+
+import type { StyledProps } from '../common';
+import type { PopupVisibleChangeContext } from '../popup';
+import type { DropdownOption, TdDropdownProps } from './type';
 
 export interface DropdownProps extends TdDropdownProps, StyledProps {
   children?: React.ReactNode;
@@ -68,7 +71,9 @@ const Dropdown: React.FC<DropdownProps> & {
 
   const child = arrayChildren?.[0];
   const dropDownTrigger = isValidElement(child)
-    ? React.cloneElement(child as React.ReactElement<{ disabled: boolean }>, { disabled })
+    ? React.cloneElement(child as React.ReactElement<{ disabled: boolean }>, {
+        disabled,
+      })
     : child;
 
   return (

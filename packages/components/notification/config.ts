@@ -1,5 +1,6 @@
-import { NotificationOptions } from './type';
 import { notificationDefaultProps } from './defaultProps';
+
+import type { NotificationOptions } from './type';
 
 let pluginDefaultConfig: NotificationOptions = {
   ...notificationDefaultProps,
@@ -58,4 +59,6 @@ export const setGlobalConfig = (options: NotificationOptions) => {
  * @description: 获取默认的消息配置，不允许更改
  * @return: NotificationOptions
  * */
-export const getDefaultConfig = (): NotificationOptions => ({ ...pluginDefaultConfig });
+export const getDefaultConfig = (): NotificationOptions => ({
+  ...pluginDefaultConfig,
+});

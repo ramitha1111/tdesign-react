@@ -1,7 +1,8 @@
 import React, { useRef } from 'react';
-import { Form, Input, Radio, Checkbox, Button, MessagePlugin } from 'tdesign-react';
-import type { FormProps, CustomValidator } from 'tdesign-react';
 import { debounce } from 'lodash-es';
+import { Button, Checkbox, Form, Input, MessagePlugin, Radio } from 'tdesign-react';
+
+import type { CustomValidator, FormProps } from 'tdesign-react';
 
 const { FormItem } = Form;
 
@@ -65,7 +66,12 @@ export default function BaseForm() {
         name="password"
         rules={[
           { required: true, message: '密码必填', type: 'error' },
-          { validator: asyncValidate, message: '密码错误', type: 'error', trigger: 'blur' },
+          {
+            validator: asyncValidate,
+            message: '密码错误',
+            type: 'error',
+            trigger: 'blur',
+          },
         ]}
       >
         <Input onChange={handleChange} />

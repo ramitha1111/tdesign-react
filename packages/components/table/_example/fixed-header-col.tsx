@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { Table, Radio, Checkbox, Space, Tag, Link } from 'tdesign-react';
-import { ErrorCircleFilledIcon, CheckCircleFilledIcon, CloseCircleFilledIcon } from 'tdesign-icons-react';
+import { CheckCircleFilledIcon, CloseCircleFilledIcon, ErrorCircleFilledIcon } from 'tdesign-icons-react';
+import { Checkbox, Link, Radio, Space, Table, Tag } from 'tdesign-react';
 
 import type { TableProps } from 'tdesign-react';
 
@@ -45,7 +45,13 @@ export default function TableFixedColumn() {
       maxHeight={fixedTopAndBottomRows ? 500 : 300}
       fixedRows={fixedTopAndBottomRows ? [2, 2] : undefined}
       columns={[
-        { colKey: 'applicant', title: '申请人', width: '100', foot: '共20条', fixed: 'left' },
+        {
+          colKey: 'applicant',
+          title: '申请人',
+          width: '100',
+          foot: '共20条',
+          fixed: 'left',
+        },
         {
           colKey: 'status',
           title: '审批状态',

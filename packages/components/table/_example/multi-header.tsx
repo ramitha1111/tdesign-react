@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { Table, Checkbox, Space, Tag } from 'tdesign-react';
-import { ErrorCircleFilledIcon, CheckCircleFilledIcon, CloseCircleFilledIcon } from 'tdesign-icons-react';
+import { CheckCircleFilledIcon, CloseCircleFilledIcon, ErrorCircleFilledIcon } from 'tdesign-icons-react';
+import { Checkbox, Space, Table, Tag } from 'tdesign-react';
 
 import type { TableProps, TableSort } from 'tdesign-react';
 
@@ -45,7 +45,10 @@ export default function TableExample() {
   const [fixedLeftCol, setFixedLeftCol] = useState(false);
   const [fixedRightCol, setFixedRightCol] = useState(false);
   const [headerAffixedTop, setHeaderAffixedTop] = useState(false);
-  const [sort, setSort] = useState<TableSort>({ sortBy: 'default', descending: false });
+  const [sort, setSort] = useState<TableSort>({
+    sortBy: 'default',
+    descending: false,
+  });
 
   const onSortChange: TableProps['onSortChange'] = (sortInfo, context) => {
     setSort(sortInfo);

@@ -1,11 +1,11 @@
 import React, { useEffect, useImperativeHandle, useRef, useState } from 'react';
+import classNames from 'classnames';
+import { isFunction } from 'lodash-es';
 import {
   BrowseIcon as TdBrowseIcon,
   BrowseOffIcon as TdBrowseOffIcon,
   CloseCircleFilledIcon as TdCloseCircleFilledIcon,
 } from 'tdesign-icons-react';
-import classNames from 'classnames';
-import { isFunction } from 'lodash-es';
 
 import forwardRefWithStatics from '../_util/forwardRefWithStatics';
 import parseTNode from '../_util/parseTNode';
@@ -166,7 +166,12 @@ const Input = forwardRefWithStatics(
       ) : null;
 
     const updateInputWidth = () => {
-      if (!autoWidth || !inputRef.current) return;
+      if (!inputRef.current) return;
+      if (!autoWidth || !inputPreRef.current) {
+        // autoWidth 关闭时清除之前设置的内联宽度，避免残留
+        inputRef.current.style.width = '';
+        return;
+      }
       const { offsetWidth } = inputPreRef.current;
       const { width } = inputPreRef.current.getBoundingClientRect();
       // 异步渲染场景下 getBoundingClientRect 宽度为 0，需要使用 offsetWidth
@@ -214,7 +219,7 @@ const Input = forwardRefWithStatics(
       // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
-    const innerValue = composingRef.current ? composingValue : value ?? '';
+    const innerValue = composingRef.current ? composingValue : (value ?? '');
     const formatDisplayValue = format && !isFocused ? format(innerValue) : innerValue;
 
     const renderInput = (
@@ -343,6 +348,9 @@ const Input = forwardRefWithStatics(
       const {
         currentTarget: { value },
       } = e;
+      // 合成期间输入框展示的是 composingValue，而外部 value 可能已被程序清空（如 Select 选中选项后清空筛选词），
+      // 此时需要以输入框当前内容为起点重新累计，否则上一次的合成内容会被残留并累加
+      setComposingValue(value);
       onCompositionstart?.(value, { e });
     }
     function handleCompositionEnd(e: React.CompositionEvent<HTMLInputElement>) {

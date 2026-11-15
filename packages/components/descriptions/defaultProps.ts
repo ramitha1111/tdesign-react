@@ -2,7 +2,7 @@
  * 该文件为脚本自动生成文件，请勿随意修改。如需修改请联系 PMC
  * */
 
-import { TdDescriptionsProps, TdDescriptionsItemProps } from './type';
+import type { TdDescriptionsItemProps, TdDescriptionsProps } from './type';
 
 export const descriptionsDefaultProps: TdDescriptionsProps = {
   bordered: false,
@@ -13,4 +13,6 @@ export const descriptionsDefaultProps: TdDescriptionsProps = {
   tableLayout: 'auto',
 };
 
-export const descriptionsItemDefaultProps: TdDescriptionsItemProps = { span: 1 };
+export const descriptionsItemDefaultProps: TdDescriptionsItemProps = {
+  span: 1,
+};

@@ -1,7 +1,9 @@
-import React from 'react';
-import { TdDescriptionsItemProps } from './type';
+import type * as React from 'react';
+import type { TdDescriptionsItemProps } from './type';
 
-export type DescriptionsItemProps = TdDescriptionsItemProps & { children?: React.ReactNode };
+export type DescriptionsItemProps = TdDescriptionsItemProps & {
+  children?: React.ReactNode;
+};
 
 const DescriptionsItem: React.FC<DescriptionsItemProps> = () => null;
 

@@ -1,6 +1,8 @@
-import { useCallback, useRef, useEffect } from 'react';
-import type { AgentToolcallConfig, ToolcallComponentProps } from '../components/toolcall/types';
+import { useCallback, useEffect, useRef } from 'react';
+
 import { agentToolcallRegistry } from '../components/toolcall/registry';
+
+import type { AgentToolcallConfig, ToolcallComponentProps } from '../components/toolcall/types';
 
 export interface UseAgentToolcallReturn {
   register: (config: AgentToolcallConfig | AgentToolcallConfig[]) => void;
@@ -116,5 +118,9 @@ export interface ToolConfigWithStateOptions<TArgs extends object = any, TResult 
   description: string;
   parameters: Array<{ name: string; type: string }>;
   subscribeKey?: (props: ToolcallComponentProps<TArgs, TResult>) => string | undefined;
-  component: React.ComponentType<ToolcallComponentProps<TArgs, TResult> & { agentState?: Record<string, any> }>;
+  component: React.ComponentType<
+    ToolcallComponentProps<TArgs, TResult> & {
+      agentState?: Record<string, any>;
+    }
+  >;
 }

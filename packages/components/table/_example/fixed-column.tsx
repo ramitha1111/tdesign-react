@@ -1,6 +1,6 @@
 import React, { useRef, useState } from 'react';
-import { Table, Radio, Checkbox, Space, Tag, Link } from 'tdesign-react';
-import { ErrorCircleFilledIcon, CheckCircleFilledIcon, CloseCircleFilledIcon } from 'tdesign-icons-react';
+import { CheckCircleFilledIcon, CloseCircleFilledIcon, ErrorCircleFilledIcon } from 'tdesign-icons-react';
+import { Checkbox, Link, Radio, Space, Table, Tag } from 'tdesign-react';
 
 import type { TableProps } from 'tdesign-react';
 
@@ -69,7 +69,12 @@ export default function TableFixedColumn() {
         },
         { colKey: 'detail.email', title: '邮箱地址', width: 180 },
         { colKey: 'matters', title: '申请事项', width: 200 },
-        { colKey: 'createTime', title: '申请日期', width: 120, fixed: rightFixedColumn >= 2 ? 'right' : undefined },
+        {
+          colKey: 'createTime',
+          title: '申请日期',
+          width: 120,
+          fixed: rightFixedColumn >= 2 ? 'right' : undefined,
+        },
         {
           colKey: 'operation',
           title: '操作',

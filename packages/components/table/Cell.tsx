@@ -1,14 +1,17 @@
-import React, { MouseEvent, MutableRefObject, ReactNode } from 'react';
+import React from 'react';
 import classNames from 'classnames';
-import { isFunction, get } from 'lodash-es';
+import { get, isFunction } from 'lodash-es';
+
 import TEllipsis from './Ellipsis';
-import { BaseTableCellParams, RowspanColspan, TableRowData, TdBaseTableProps } from './type';
-import { RowAndColFixedPosition } from './interface';
 import { getColumnFixedStyles } from './hooks/useFixed';
-import { TableClassName } from './hooks/useClassName';
 import { formatClassNames } from './utils';
-import { TooltipProps } from '../tooltip';
-import { PaginationProps } from '../pagination';
+
+import type { MouseEvent, MutableRefObject, ReactNode } from 'react';
+import type { PaginationProps } from '../pagination';
+import type { TooltipProps } from '../tooltip';
+import type { TableClassName } from './hooks/useClassName';
+import type { RowAndColFixedPosition } from './interface';
+import type { BaseTableCellParams, RowspanColspan, TableRowData, TdBaseTableProps } from './type';
 
 export interface RenderEllipsisCellParams {
   cellNode: ReactNode;
@@ -102,7 +105,10 @@ const Cell = (props: CellProps) => {
 
   const cellNode = renderCell(cellParams, { cellEmptyContent, pagination });
   const tdStyles = getColumnFixedStyles(col, colIndex, rowAndColFixedPosition, tableColFixedClasses);
-  const customClasses = formatClassNames(col.className, { ...cellParams, type: 'td' });
+  const customClasses = formatClassNames(col.className, {
+    ...cellParams,
+    type: 'td',
+  });
   const classes = [
     tdStyles.classes,
     customClasses,
@@ -116,7 +122,11 @@ const Cell = (props: CellProps) => {
     },
   ];
   const normalAttrs = isFunction(col.attrs) ? col.attrs({ ...cellParams, type: 'td' }) : col.attrs;
-  const attrs = { ...normalAttrs, rowSpan: cellSpans.rowspan, colSpan: cellSpans.colspan };
+  const attrs = {
+    ...normalAttrs,
+    rowSpan: cellSpans.rowspan,
+    colSpan: cellSpans.colspan,
+  };
   return (
     <td
       key={col.colKey || colIndex}

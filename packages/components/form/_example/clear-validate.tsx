@@ -1,6 +1,7 @@
 import React from 'react';
-import { Form, Input, Checkbox, Button, MessagePlugin, Radio, Select } from 'tdesign-react';
-import type { FormProps, IsDateOptions, FormRules, Data } from 'tdesign-react';
+import { Button, Checkbox, Form, Input, MessagePlugin, Radio, Select } from 'tdesign-react';
+
+import type { Data, FormProps, FormRules, IsDateOptions } from 'tdesign-react';
 
 const { FormItem } = Form;
 
@@ -11,8 +12,14 @@ const rules: FormRules<Data> = {
     { max: 10, message: '姓名字符长度超出' },
   ],
   description: [
-    { validator: (val: string) => val.length >= 5, message: '至少 5 个字，中文长度等于英文长度' },
-    { validator: (val: string) => val.length < 20, message: '不能超过 20 个字，中文长度等于英文长度' },
+    {
+      validator: (val: string) => val.length >= 5,
+      message: '至少 5 个字，中文长度等于英文长度',
+    },
+    {
+      validator: (val: string) => val.length < 20,
+      message: '不能超过 20 个字，中文长度等于英文长度',
+    },
   ],
   password: [
     { required: true, message: '密码必填' },
@@ -26,7 +33,10 @@ const rules: FormRules<Data> = {
   gender: [{ required: true, message: '性别必填' }],
   course: [
     { required: true, message: '课程必填' },
-    { validator: (val: string) => val.length <= 2, message: '最多选择 2 门课程' },
+    {
+      validator: (val: string) => val.length <= 2,
+      message: '最多选择 2 门课程',
+    },
   ],
   'content.url': [
     { required: true, message: '个人网站必填' },
@@ -114,7 +124,12 @@ export default function BaseForm() {
       <FormItem
         label="入学时间"
         name="date"
-        rules={[{ date: { delimiters: ['/', '-', '.'] } as IsDateOptions, message: '日期格式有误' }]}
+        rules={[
+          {
+            date: { delimiters: ['/', '-', '.'] } as IsDateOptions,
+            message: '日期格式有误',
+          },
+        ]}
       >
         <Input />
       </FormItem>

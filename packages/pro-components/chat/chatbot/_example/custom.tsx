@@ -1,17 +1,18 @@
 import React, { useRef } from 'react';
 import { CopyIcon, EditIcon, SoundIcon } from 'tdesign-icons-react';
+import { Button, Space } from 'tdesign-react';
+import TvisionTcharts from 'tvision-charts-react';
+import { ChatBot } from '@tdesign-react/chat';
+
+import type { AIContentChunkUpdate } from '@tdesign/web-components-chat';
 import type {
-  SSEChunkData,
-  TdChatMessageConfig,
-  AIContentChunkUpdate,
-  ChatRequestParams,
-  ChatServiceConfig,
   ChatBaseContent,
   ChatMessagesData,
+  ChatRequestParams,
+  ChatServiceConfig,
+  SSEChunkData,
+  TdChatMessageConfig,
 } from '@tdesign-react/chat';
-import { Button, Space } from 'tdesign-react';
-import { ChatBot } from '@tdesign-react/chat';
-import TvisionTcharts from 'tvision-charts-react';
 
 // 1、扩展自定义消息体类型
 declare module '@tdesign-react/chat' {
@@ -169,9 +170,9 @@ export default function ChatBotReact() {
         senderProps={{
           defaultValue: '北京今天早晚高峰交通情况如何，需要分别给出曲线图表示每个时段',
         }}
-        chatServiceConfig={chatServiceConfig}
+        chatServiceConfig={chatServiceConfig as any}
         onMessageChange={(e) => {
-          setMockMessage(e.detail);
+          setMockMessage(e.detail as any);
         }}
       >
         {/* 4、植入自定义消息体渲染插槽 */}

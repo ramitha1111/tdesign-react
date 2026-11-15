@@ -1,22 +1,26 @@
-import React, { ReactNode, useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { InternetIcon } from 'tdesign-icons-react';
-import {
-  ChatList,
-  ChatSender,
-  ChatMessage,
-  ChatActionBar,
-  ChatLoading,
-  useChat,
-  isAIMessage,
-  getMessageContentForCopy,
-  type SSEChunkData,
-  type AIMessageContent,
-  type ChatMessagesData,
-  type ChatRequestParams,
-  type TdChatSenderParams,
-  type TdChatActionsName,
-} from '@tdesign-react/chat';
 import { Avatar, Button, Space } from 'tdesign-react';
+import {
+  ChatActionBar,
+  ChatList,
+  ChatLoading,
+  ChatMessage,
+  ChatSender,
+  getMessageContentForCopy,
+  isAIMessage,
+  useChat,
+} from '@tdesign-react/chat';
+
+import type { ReactNode } from 'react';
+import type {
+  AIMessageContent,
+  ChatMessagesData,
+  ChatRequestParams,
+  SSEChunkData,
+  TdChatActionsName,
+  TdChatSenderParams,
+} from '@tdesign-react/chat';
 
 /**
  * 综合示例
@@ -33,7 +37,10 @@ export default function Comprehensive() {
   const [inputValue, setInputValue] = useState('');
   const [activeR1, setR1Active] = useState(true);
   const [activeSearch, setSearchActive] = useState(true);
-  const reqParamsRef = useRef<{ think: boolean; search: boolean }>({ think: false, search: false });
+  const reqParamsRef = useRef<{ think: boolean; search: boolean }>({
+    think: false,
+    search: false,
+  });
 
   // 默认初始化消息
   const defaultMessages: ChatMessagesData[] = [
@@ -194,7 +201,7 @@ export default function Comprehensive() {
         />
       );
     }
-    return <ChatLoading animation="dot" />;
+    return <ChatLoading animation="dots" />;
   };
 
   // 发送消息
@@ -206,11 +213,13 @@ export default function Comprehensive() {
 
   return (
     <div style={{ height: '600px', display: 'flex', flexDirection: 'column' }}>
-      <ChatList style={{ flex: 1 }}>
+      <ChatList
+      // style={{ flex: 1 }}
+      >
         {messages.map((message, idx) => {
           const isLast = idx === messages.length - 1;
           // 假设只有单条thinking
-          const thinking = message.content.find((item) => item.type === 'thinking');
+          const thinking = message.content.find((item) => (item.type as any) === 'thinking');
 
           // 根据角色配置消息样式
           if (message.role === 'user') {

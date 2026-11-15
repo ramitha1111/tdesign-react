@@ -1,16 +1,6 @@
 import React from 'react';
-import {
-  Form,
-  Input,
-  Radio,
-  Checkbox,
-  Button,
-  Switch,
-  MessagePlugin,
-  DatePicker,
-  Tooltip,
-  Space,
-} from 'tdesign-react';
+import { Button, Checkbox, DatePicker, Form, Input, MessagePlugin, Radio, Space, Switch, Tooltip } from 'tdesign-react';
+
 import type { FormProps } from 'tdesign-react';
 
 const { FormItem } = Form;
@@ -38,8 +28,16 @@ export default function BaseForm() {
   const setMessage = () => {
     console.log(form);
     form.setFields([
-      { name: 'name', status: 'error', validateMessage: { type: 'error', message: '输入有误' } },
-      { name: 'birthday', status: 'warning', validateMessage: { type: 'warning', message: '时间有误' } },
+      {
+        name: 'name',
+        status: 'error',
+        validateMessage: { type: 'error', message: '输入有误' },
+      },
+      {
+        name: 'birthday',
+        status: 'warning',
+        validateMessage: { type: 'warning', message: '时间有误' },
+      },
     ]);
   };
 

@@ -1,6 +1,8 @@
 import React from 'react';
 import { Space } from 'tdesign-react';
-import { ChatActionBar, ChatMessage, AIMessage, getMessageContentForCopy } from '@tdesign-react/chat';
+import { ChatActionBar, ChatMessage, getMessageContentForCopy } from '@tdesign-react/chat';
+
+import type { AIMessage } from '@tdesign-react/chat';
 
 const message: AIMessage = {
   id: '123123',
@@ -21,10 +23,9 @@ export default function ChatMessageExample() {
         name="TDesignAI"
         role={message.role}
         content={message.content}
-      >
-        {/* 植入插槽用来追加消息底部操作栏 */}
-        <ChatActionBar slot="actionbar" copyText={getMessageContentForCopy(message)}></ChatActionBar>
-      </ChatMessage>
+        // 植入插槽用来追加消息底部操作栏
+        actionbar={<ChatActionBar copyText={getMessageContentForCopy(message)}></ChatActionBar>}
+      />
     </Space>
   );
 }

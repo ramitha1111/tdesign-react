@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
-import { Form, Input, Button, MessagePlugin } from 'tdesign-react';
-import type { FormRules, FormValidateMessage, Data, FormProps } from 'tdesign-react';
+import { Button, Form, Input, MessagePlugin } from 'tdesign-react';
+
+import type { Data, FormProps, FormRules, FormValidateMessage } from 'tdesign-react';
 
 const { FormItem } = Form;
 
@@ -21,7 +22,12 @@ const validateMessage: FormValidateMessage<Data> = {
 
 const rules: FormRules<Data> = {
   account: [{ required: true }, { min: 2 }, { max: 10, type: 'warning' }],
-  description: [{ validator: (val: string) => val.length < 10, message: '不能超过 20 个字，中文长度等于英文长度' }],
+  description: [
+    {
+      validator: (val: string) => val.length < 10,
+      message: '不能超过 20 个字，中文长度等于英文长度',
+    },
+  ],
   password: [{ required: true }, { len: 8, message: '请输入 8 位密码' }],
 };
 

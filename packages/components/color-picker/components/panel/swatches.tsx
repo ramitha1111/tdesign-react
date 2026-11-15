@@ -1,10 +1,12 @@
 import React from 'react';
 import classnames from 'classnames';
-import { DeleteIcon as TdDeleteIcon, AddIcon as TdAddIcon } from 'tdesign-icons-react';
+import { AddIcon as TdAddIcon, DeleteIcon as TdDeleteIcon } from 'tdesign-icons-react';
 import Color from '@tdesign/common-js/color-picker/color';
-import useGlobalIcon from '../../../hooks/useGlobalIcon';
-import { TdColorBaseProps } from '../../interface';
+
 import useCommonClassName from '../../../hooks/useCommonClassName';
+import useGlobalIcon from '../../../hooks/useGlobalIcon';
+
+import type { TdColorBaseProps } from '../../interface';
 
 export interface TdColorSwathcesProps extends TdColorBaseProps {
   colors?: string[];
@@ -16,7 +18,10 @@ export interface TdColorSwathcesProps extends TdColorBaseProps {
 
 const Swatches = (props: TdColorSwathcesProps) => {
   const { baseClassName, colors = [], editable = false, title, onChange, disabled, onSetColor, handleAddColor } = props;
-  const { DeleteIcon, AddIcon } = useGlobalIcon({ DeleteIcon: TdDeleteIcon, AddIcon: TdAddIcon });
+  const { DeleteIcon, AddIcon } = useGlobalIcon({
+    DeleteIcon: TdDeleteIcon,
+    AddIcon: TdAddIcon,
+  });
   const swatchesClass = `${baseClassName}__swatches`;
   const { STATUS: statusClassNames } = useCommonClassName();
   const isEqualCurrentColor = (color: string) => Color.compare(color, props.color.css);

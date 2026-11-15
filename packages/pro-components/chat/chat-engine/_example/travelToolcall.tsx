@@ -1,33 +1,34 @@
-import React, { ReactNode, useCallback, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useMemo, useRef, useState } from 'react';
+import { HistoryIcon, LoadingIcon } from 'tdesign-icons-react';
 import { Button } from 'tdesign-react';
 import {
-  ChatList,
-  ChatSender,
-  ChatMessage,
-  TdChatListApi,
-  TdChatSenderApi,
-  ChatActionBar,
-  isAIMessage,
-  getMessageContentForCopy,
   AGUIAdapter,
+  ChatActionBar,
+  ChatList,
+  ChatMessage,
+  ChatSender,
+  getMessageContentForCopy,
+  isAIMessage,
   isToolCallContent,
 } from '@tdesign-react/chat';
-import { LoadingIcon, HistoryIcon } from 'tdesign-icons-react';
-import type {
-  TdChatMessageConfig,
-  TdChatActionsName,
-  TdChatSenderParams,
-  ChatMessagesData,
-  ChatRequestParams,
-  ChatBaseContent,
-  AIMessageContent,
-  ToolCall,
-  AGUIHistoryMessage,
-} from '@tdesign-react/chat';
+
 import { ToolCallRenderer, useAgentToolcall, useChat } from '../index';
-import './travel.css';
 import { travelActions } from './travel-actions';
 
+import type { ReactNode } from 'react';
+import type {
+  AGUIHistoryMessage,
+  AIMessageContent,
+  ChatBaseContent,
+  ChatMessagesData,
+  ChatRequestParams,
+  TdChatActionsName,
+  TdChatMessageConfig,
+  TdChatSenderParams,
+  ToolCall,
+} from '@tdesign-react/chat';
+
+import './travel.css';
 // 扩展自定义消息体类型
 declare module '@tdesign-react/chat' {
   interface AIContentTypeOverrides {
@@ -64,8 +65,8 @@ const loadHistoryMessages = async (): Promise<ChatMessagesData[]> => {
 };
 
 export default function TravelPlannerChat() {
-  const listRef = useRef<TdChatListApi>(null);
-  const inputRef = useRef<TdChatSenderApi>(null);
+  const listRef = useRef<any | null>(null);
+  const inputRef = useRef<any | null>(null);
   const [inputValue, setInputValue] = useState<string>('请为我规划一个北京5日游行程');
 
   // 注册旅游相关的 Agent Toolcalls
@@ -169,7 +170,7 @@ export default function TravelPlannerChat() {
 
   const { chatEngine, messages, status } = useChat({
     defaultMessages,
-    chatServiceConfig: createChatServiceConfig(),
+    chatServiceConfig: createChatServiceConfig() as any,
   });
 
   const senderLoading = useMemo(() => status === 'pending' || status === 'streaming', [status]);
@@ -221,7 +222,7 @@ export default function TravelPlannerChat() {
     async (toolcall: ToolCall, response: any) => {
       try {
         // 构造新的请求参数
-        const tools = chatEngine.getToolcallByName(toolcall.toolCallName) || {};
+        const tools = (chatEngine as any).getToolcallByName(toolcall.toolCallName) || {};
         const newRequestParams: ChatRequestParams = {
           toolCallMessage: {
             ...tools,
@@ -303,7 +304,14 @@ export default function TravelPlannerChat() {
   if (isLoadingHistory) {
     return (
       <div className="travel-planner-container">
-        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            height: '100vh',
+          }}
+        >
           <LoadingIcon size="large" />
           <span style={{ marginLeft: '8px' }}>加载历史消息中...</span>
         </div>
@@ -339,7 +347,7 @@ export default function TravelPlannerChat() {
       </div>
 
       <div className="chat-content">
-        <ChatList ref={listRef} style={{ width: '100%', height: '500px' }}>
+        <ChatList ref={listRef}>
           {messages.map((message, idx) => (
             <ChatMessage key={message.id} {...messageProps[message.role]} message={message}>
               {renderMsgContents(message, idx === messages.length - 1)}

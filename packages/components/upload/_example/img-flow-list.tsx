@@ -1,14 +1,7 @@
 import React, { useState } from 'react';
-import {
-  Upload,
-  Space,
-  MessagePlugin,
-  Switch,
-  Checkbox,
-  Divider,
-  SwitchProps,
-  type UploadProps,
-} from 'tdesign-react';
+import { Checkbox, Divider, MessagePlugin, Space, Switch, Upload } from 'tdesign-react';
+
+import type { SwitchProps, UploadProps } from 'tdesign-react';
 
 const ABRIDGE_NAME = [4, 6];
 
@@ -26,8 +19,16 @@ export default function TUploadImageFlow() {
   const [showImageFileName, setShowImageFileName] = useState(true);
   const [showUploadButton, setShowUploadButton] = useState(true);
   const [files, setFiles] = useState([
-    { url: 'https://tdesign.gtimg.com/demo/demo-image-1.png', status: 'success', name: 'demo-image-1.png' },
-    { url: 'https://tdesign.gtimg.com/site/avatar.jpg', status: 'success', name: 'avatar.jpg' },
+    {
+      url: 'https://tdesign.gtimg.com/demo/demo-image-1.png',
+      status: 'success',
+      name: 'demo-image-1.png',
+    },
+    {
+      url: 'https://tdesign.gtimg.com/site/avatar.jpg',
+      status: 'success',
+      name: 'avatar.jpg',
+    },
   ]);
   // eslint-disable-next-line
   const [files2, setFiles2] = useState([]);
@@ -68,8 +69,16 @@ export default function TUploadImageFlow() {
   // eslint-disable-next-line
   const requestMethod2 = () => {
     const files = [
-      { name: files2[0].name, status: 'success', url: 'https://tdesign.gtimg.com/site/avatar.jpg' },
-      { name: files2[1].name, status: 'success', url: 'https://avatars.githubusercontent.com/u/11605702?v=4' },
+      {
+        name: files2[0].name,
+        status: 'success',
+        url: 'https://tdesign.gtimg.com/site/avatar.jpg',
+      },
+      {
+        name: files2[1].name,
+        status: 'success',
+        url: 'https://avatars.githubusercontent.com/u/11605702?v=4',
+      },
     ];
     return new Promise((resolve) => {
       resolve({

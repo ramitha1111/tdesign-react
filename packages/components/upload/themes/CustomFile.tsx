@@ -1,8 +1,12 @@
-import React, { ReactNode } from 'react';
-import useDrag, { UploadDragEvents } from '../hooks/useDrag';
-import { CommonDisplayFileProps } from '../interface';
-import { TdUploadProps } from '../type';
+import React from 'react';
+
 import parseTNode from '../../_util/parseTNode';
+import useDrag from '../hooks/useDrag';
+
+import type { ReactNode } from 'react';
+import type { UploadDragEvents } from '../hooks/useDrag';
+import type { CommonDisplayFileProps } from '../interface';
+import type { TdUploadProps } from '../type';
 
 export interface CustomFileProps extends CommonDisplayFileProps {
   dragEvents: UploadDragEvents;
@@ -30,8 +34,14 @@ const CustomFile = (props: CustomFileProps) => {
     : {};
 
   const renderDragContent = () => {
-    const childrenContent = parseTNode(props.childrenNode, { dragActive, files: displayFiles });
-    const triggerContent = parseTNode(props.trigger, { dragActive, files: displayFiles });
+    const childrenContent = parseTNode(props.childrenNode, {
+      dragActive,
+      files: displayFiles,
+    });
+    const triggerContent = parseTNode(props.trigger, {
+      dragActive,
+      files: displayFiles,
+    });
     return (
       <div
         className={`${classPrefix}-upload__dragger ${classPrefix}-upload__dragger-center`}

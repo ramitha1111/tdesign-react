@@ -1,17 +1,17 @@
-import React, { useState, useEffect, useCallback, useMemo, useRef, isValidElement } from 'react';
+import React, { isValidElement, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import classnames from 'classnames';
 import { ChevronLeftIcon as TdChevronLeftIcon, ChevronRightIcon as TdChevronRightIcon } from 'tdesign-icons-react';
-import useConfig from '../hooks/useConfig';
-import useGlobalIcon from '../hooks/useGlobalIcon';
+
 import noop from '../_util/noop';
-import { TdSwiperProps, SwiperChangeSource, SwiperNavigation } from './type';
-import { StyledProps } from '../common';
-import { swiperDefaultProps } from './defaultProps';
-
-import SwiperItem from './SwiperItem';
+import useConfig from '../hooks/useConfig';
 import useDefaultProps from '../hooks/useDefaultProps';
+import useGlobalIcon from '../hooks/useGlobalIcon';
+import { swiperDefaultProps } from './defaultProps';
+import SwiperItem from './SwiperItem';
 
+import type { StyledProps } from '../common';
 import type { SwiperItemProps } from './SwiperItem';
+import type { SwiperChangeSource, SwiperNavigation, TdSwiperProps } from './type';
 
 export interface SwiperProps extends TdSwiperProps, StyledProps {
   children?: React.ReactNode;
@@ -71,7 +71,10 @@ const Swiper: React.FC<SwiperProps> & Record<'SwiperItem', typeof SwiperItem> = 
   if (isValidElement(navigation)) {
     navigationNode = navigation;
   } else {
-    navigationConfig = { ...defaultNavigation, ...(navigation as SwiperNavigation) };
+    navigationConfig = {
+      ...defaultNavigation,
+      ...(navigation as SwiperNavigation),
+    };
   }
 
   const [currentIndex, setCurrentIndex] = useState(() => current ?? defaultCurrent);
@@ -117,7 +120,11 @@ const Swiper: React.FC<SwiperProps> & Record<'SwiperItem', typeof SwiperItem> = 
     const lastEle = swiperItemList[childrenLength - 1];
     swiperItemList.unshift(React.cloneElement(lastEle, { ...lastEle, props, key: -1, index: -1 }));
     swiperItemList.push(
-      React.cloneElement(firstEle, { ...firstEle.props, key: childrenLength, index: childrenLength }),
+      React.cloneElement(firstEle, {
+        ...firstEle.props,
+        key: childrenLength,
+        index: childrenLength,
+      }),
     );
   }
 

@@ -1,16 +1,16 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { Edit1Icon as TdEdit1Icon } from 'tdesign-icons-react';
 import classNames from 'classnames';
 import { cloneDeep, get, isFunction, set } from 'lodash-es';
-
+import { Edit1Icon as TdEdit1Icon } from 'tdesign-icons-react';
 import log from '@tdesign/common-js/log/index';
+
 import { validate } from '../form/formModel';
 import useConfig from '../hooks/useConfig';
 import useGlobalIcon from '../hooks/useGlobalIcon';
 import { renderCell } from './Cell';
-import { TableClassName } from './hooks/useClassName';
 
 import type { AllValidateResult } from '../form/type';
+import type { TableClassName } from './hooks/useClassName';
 import type {
   PrimaryTableCellParams,
   PrimaryTableCol,
@@ -85,7 +85,12 @@ const EditableCell = (props: EditableCellProps) => {
   };
 
   const editOnListeners = useMemo(
-    () => col.edit?.on?.({ ...cellParams, editedRow: currentRow, updateEditedCellValue }) || {},
+    () =>
+      col.edit?.on?.({
+        ...cellParams,
+        editedRow: currentRow,
+        updateEditedCellValue,
+      }) || {},
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [cellParams, currentRow],
   );
@@ -107,7 +112,11 @@ const EditableCell = (props: EditableCellProps) => {
     const { edit } = col;
     if (!edit) return {};
     const editProps = isFunction(edit.props)
-      ? edit.props({ ...cellParams, editedRow: currentRow, updateEditedCellValue })
+      ? edit.props({
+          ...cellParams,
+          editedRow: currentRow,
+          updateEditedCellValue,
+        })
       : { ...edit.props };
     // to remove warn: runtime-core.esm-bundler.js:38 [Vue warn]: Invalid prop: type check failed for prop "onChange". Expected Function, got Array
     delete editProps.onChange;

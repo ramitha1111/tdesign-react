@@ -1,14 +1,15 @@
 import React, { useRef, useState } from 'react';
-import {
-  ChatBot,
-  SSEChunkData,
+import { Button, MessagePlugin, Space } from 'tdesign-react';
+import { ChatBot } from '@tdesign-react/chat';
+
+import type {
   AIMessageContent,
   ChatServiceConfig,
-  type TdChatbotApi,
-  type TdAttachmentItem,
-  type TdChatSenderActionName,
+  SSEChunkData,
+  TdAttachmentItem,
+  TdChatbotApi,
+  TdChatSenderActionName,
 } from '@tdesign-react/chat';
-import { MessagePlugin, Button, Space } from 'tdesign-react';
 import type { UploadFile } from 'tdesign-react';
 
 /**
@@ -118,7 +119,14 @@ export default function SenderConfig() {
   return (
     <div>
       {/* 快捷指令区域 */}
-      <div style={{ marginBottom: '16px', padding: '12px', background: '#f5f5f5', borderRadius: '4px' }}>
+      <div
+        style={{
+          marginBottom: '16px',
+          padding: '12px',
+          background: 'var(--td-bg-color-secondarycontainer)',
+          borderRadius: '4px',
+        }}
+      >
         <div style={{ marginBottom: '8px', fontSize: '14px', fontWeight: 500 }}>快捷指令：</div>
         <Space size="small" breakLine>
           {quickPrompts.map((prompt, index) => (
@@ -138,7 +146,7 @@ export default function SenderConfig() {
 
       {/* 聊天组件 */}
       <div style={{ height: '400px' }}>
-        <ChatBot ref={chatRef} senderProps={senderProps} chatServiceConfig={chatServiceConfig} />
+        <ChatBot ref={chatRef} senderProps={senderProps as any} chatServiceConfig={chatServiceConfig as any} />
       </div>
     </div>
   );

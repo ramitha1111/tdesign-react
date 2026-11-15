@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { Form, Input, Button, MessagePlugin, Radio, Select, Checkbox, Popup, Space } from 'tdesign-react';
-import type { RadioValue, IsDateOptions, FormRules, Data, FormProps } from 'tdesign-react';
+import { Button, Checkbox, Form, Input, MessagePlugin, Popup, Radio, Select, Space } from 'tdesign-react';
+
+import type { Data, FormProps, FormRules, IsDateOptions, RadioValue } from 'tdesign-react';
 
 const { FormItem } = Form;
 
@@ -37,7 +38,10 @@ const rules: FormRules<Data> = {
   ],
   description: [
     { validator: (val: string) => val.length >= 5 },
-    { validator: (val: string) => val.length < 10, message: '不能超过 20 个字，中文长度等于英文长度' },
+    {
+      validator: (val: string) => val.length < 10,
+      message: '不能超过 20 个字，中文长度等于英文长度',
+    },
   ],
   password: [
     { required: true },
@@ -48,7 +52,11 @@ const rules: FormRules<Data> = {
   gender: [{ required: true }],
   course: [
     { required: true },
-    { validator: (val: string) => val.length <= 2, message: '最多选择 2 门课程', type: 'warning' },
+    {
+      validator: (val: string) => val.length <= 2,
+      message: '最多选择 2 门课程',
+      type: 'warning',
+    },
   ],
   'content.url': [
     { required: true },
@@ -141,7 +149,12 @@ export default function BaseForm() {
         <FormItem
           label="入学时间"
           name="date"
-          rules={[{ date: { delimiters: ['/', '-', '.'] } as boolean | IsDateOptions, message: '日期格式有误' }]}
+          rules={[
+            {
+              date: { delimiters: ['/', '-', '.'] } as boolean | IsDateOptions,
+              message: '日期格式有误',
+            },
+          ]}
           initialData=""
         >
           <Input />

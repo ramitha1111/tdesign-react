@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import { SelectInput } from 'tdesign-react';
+import React, { useEffect, useState } from 'react';
 import { ChevronDownIcon } from 'tdesign-icons-react';
+import { SelectInput } from 'tdesign-react';
 
 import type { SelectInputValueChangeContext } from 'tdesign-react';
 
@@ -45,7 +45,10 @@ const OPTIONS = [
 
 export default function SelectInputAutocomplete() {
   const [popupVisible, setPopupVisible] = useState(false);
-  const [selectValue, setSelectValue] = useState({ label: 'tdesign-vue', value: 1 });
+  const [selectValue, setSelectValue] = useState({
+    label: 'tdesign-vue',
+    value: 1,
+  });
 
   const onOptionClick = (item: { label: string; value: number }) => {
     setSelectValue(item);

@@ -1,27 +1,29 @@
-import React, { ReactNode, useRef, useState, useMemo } from 'react';
-import { Card, Progress, Space, Image } from 'tdesign-react';
+import React, { useMemo, useRef, useState } from 'react';
 import { CheckCircleFilledIcon, CloseCircleFilledIcon, LoadingIcon } from 'tdesign-icons-react';
+import { Card, Image, Progress, Space } from 'tdesign-react';
 import {
-  ChatList,
-  ChatSender,
-  ChatMessage,
   ChatActionBar,
-  isAIMessage,
-  TdChatSenderParams,
+  ChatList,
   ChatLoading,
-  TdChatActionsName,
-  ToolCallRenderer,
-  useChat,
-  useAgentToolcall,
+  ChatMessage,
+  ChatSender,
+  isAIMessage,
   isToolCallContent,
+  ToolCallRenderer,
+  useAgentToolcall,
+  useChat,
 } from '@tdesign-react/chat';
+
+import type { ReactNode } from 'react';
 import type {
-  TdChatMessageConfig,
+  AgentToolcallConfig,
+  AIMessageContent,
   ChatMessagesData,
   ChatRequestParams,
-  AIMessageContent,
+  TdChatActionsName,
+  TdChatMessageConfig,
+  TdChatSenderParams,
   ToolCall,
-  AgentToolcallConfig,
   ToolcallComponentProps,
 } from '@tdesign-react/chat';
 
@@ -114,12 +116,27 @@ const ImageGenProgress: React.FC<ToolcallComponentProps<GenerateImageArgs>> = ({
       case 'completed':
         return (
           <Space direction="vertical" style={{ width: '100%' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#52c41a' }}>
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+                color: '#52c41a',
+              }}
+            >
               <CheckCircleFilledIcon />
               <span>图片生成完成</span>
             </div>
             {imageUrl && (
-              <Image src={imageUrl} fit="cover" style={{ width: '100%', maxWidth: '400px', borderRadius: '8px' }} />
+              <Image
+                src={imageUrl}
+                fit="cover"
+                style={{
+                  width: '100%',
+                  maxWidth: '400px',
+                  borderRadius: '8px',
+                }}
+              />
             )}
           </Space>
         );
@@ -127,7 +144,14 @@ const ImageGenProgress: React.FC<ToolcallComponentProps<GenerateImageArgs>> = ({
       case 'failed':
         return (
           <Space direction="vertical" style={{ width: '100%' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#ff4d4f' }}>
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+                color: '#ff4d4f',
+              }}
+            >
               <CloseCircleFilledIcon />
               <span>图片生成失败</span>
             </div>
@@ -246,7 +270,7 @@ export default function ImageGenAgentChat() {
 
   // 处理工具调用响应（如果需要交互式工具）
   const handleToolCallRespond = async <T extends object = any>(toolcall: ToolCall, response: T) => {
-    const tools = chatEngine.getToolcallByName(toolcall.toolCallName) || {};
+    const tools = (chatEngine as any).getToolcallByName(toolcall.toolCallName) || {};
     await chatEngine.sendAIMessage({
       params: {
         prompt: inputValue,
@@ -281,7 +305,7 @@ export default function ImageGenAgentChat() {
         isLast &&
         message.status !== 'stop' && (
           <div slot="actionbar">
-            <ChatLoading animation="dot" />
+            <ChatLoading animation="dots" />
           </div>
         )
       )}

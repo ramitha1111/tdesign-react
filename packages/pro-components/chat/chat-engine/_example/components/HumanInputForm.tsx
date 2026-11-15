@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { Card, Input, Select, Checkbox, Button, Space } from 'tdesign-react';
 import { UserIcon } from 'tdesign-icons-react';
+import { Button, Card, Checkbox, Input, Select, Space } from 'tdesign-react';
 
 export interface FormField {
   name: string;
@@ -97,8 +97,6 @@ export const HumanInputForm: React.FC<HumanInputFormProps> = ({ formConfig, onSu
               type="number"
               value={value || ''}
               placeholder={field.placeholder}
-              min={field.min}
-              max={field.max}
               onChange={(val) => handleInputChange(field.name, val)}
               status={error ? 'error' : undefined}
               tips={error}

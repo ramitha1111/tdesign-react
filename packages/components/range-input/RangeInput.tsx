@@ -1,16 +1,19 @@
-import React, { useState, useRef, useImperativeHandle } from 'react';
+import React, { useImperativeHandle, useRef, useState } from 'react';
 import classNames from 'classnames';
-import { isFunction } from 'lodash-es';
+import { isArray, isFunction } from 'lodash-es';
 import { CloseCircleFilledIcon as TdCloseCircleFilledIcon } from 'tdesign-icons-react';
-import Input, { InputRef } from '../input';
-import useConfig from '../hooks/useConfig';
-import useGlobalIcon from '../hooks/useGlobalIcon';
-import useControlled from '../hooks/useControlled';
-import type { StyledProps, TNode } from '../common';
+
 import parseTNode from '../_util/parseTNode';
-import type { TdRangeInputProps, RangeInputValue, RangeInputInstanceFunctions } from './type';
-import { rangeInputDefaultProps } from './defaultProps';
+import useConfig from '../hooks/useConfig';
+import useControlled from '../hooks/useControlled';
 import useDefaultProps from '../hooks/useDefaultProps';
+import useGlobalIcon from '../hooks/useGlobalIcon';
+import Input from '../input';
+import { rangeInputDefaultProps } from './defaultProps';
+
+import type { StyledProps, TNode } from '../common';
+import type { InputRef } from '../input';
+import type { RangeInputInstanceFunctions, RangeInputValue, TdRangeInputProps } from './type';
 
 export interface RangeInputProps extends TdRangeInputProps, StyledProps {}
 
@@ -88,14 +91,15 @@ const RangeInput = React.forwardRef<RangeInputInstanceFunctions, RangeInputProps
 
   const [value, onChange] = useControlled(props, 'value', onChangeFromProps);
   const [firstValue, secondValue] = value || [];
+  const [firstDisabled, secondDisabled] = isArray(disabled) ? disabled : [disabled, disabled];
+  const allDisabled = !!(firstDisabled && secondDisabled);
+  const anyDisabled = !!(firstDisabled || secondDisabled);
 
-  const isShowClearIcon = ((clearable && value?.length && !disabled) || showClearIconOnEmpty) && isHover;
+  const isShowClearIcon = ((clearable && value?.length && !anyDisabled) || showClearIconOnEmpty) && isHover;
   let suffixIconNew = suffixIcon;
 
   if (isShowClearIcon) {
-    suffixIconNew = (
-      <CloseCircleFilledIcon className={`${name}__suffix-clear`} onClick={handleClear} />
-    );
+    suffixIconNew = <CloseCircleFilledIcon className={`${name}__suffix-clear`} onClick={handleClear} />;
   }
 
   const labelContent = isFunction(label) ? label() : label;
@@ -159,7 +163,7 @@ const RangeInput = React.forwardRef<RangeInputInstanceFunctions, RangeInputProps
       ref={wrapperRef}
       style={style}
       className={classNames(name, className, {
-        [`${classPrefix}-is-disabled`]: disabled,
+        [`${classPrefix}-is-disabled`]: allDisabled,
         [`${classPrefix}-is-focused`]: isFocused,
         [`${classPrefix}-is-${status}`]: status,
         [`${classPrefix}-size-l`]: size === 'large',
@@ -180,9 +184,10 @@ const RangeInput = React.forwardRef<RangeInputInstanceFunctions, RangeInputProps
           className={`${name}__inner-left`}
           inputClass={classNames({
             [`${classPrefix}-is-focused`]: activeIndex === 0,
+            [`${classPrefix}-is-disabled`]: isArray(disabled) && firstDisabled,
           })}
           placeholder={firstPlaceholder}
-          disabled={disabled}
+          disabled={firstDisabled}
           readOnly={readOnlyProp}
           format={firstFormat}
           value={firstValue}
@@ -191,7 +196,13 @@ const RangeInput = React.forwardRef<RangeInputInstanceFunctions, RangeInputProps
           onEnter={(val, { e }) => handleEnter([val, secondValue], { e, position: 'first' })}
           onFocus={(val, { e }) => handleFocus([val, secondValue], { e, position: 'first' })}
           onBlur={(val, { e }) => handleBlur([val, secondValue], { e, position: 'first' })}
-          onChange={(val, { e }) => onChange?.([val, secondValue], { e, position: 'first', trigger: 'input' })}
+          onChange={(val, { e }) =>
+            onChange?.([val, secondValue], {
+              e,
+              position: 'first',
+              trigger: 'input',
+            })
+          }
           {...firstInputProps}
         />
 
@@ -202,9 +213,10 @@ const RangeInput = React.forwardRef<RangeInputInstanceFunctions, RangeInputProps
           className={`${name}__inner-right`}
           inputClass={classNames({
             [`${classPrefix}-is-focused`]: activeIndex === 1,
+            [`${classPrefix}-is-disabled`]: isArray(disabled) && secondDisabled,
           })}
           placeholder={secondPlaceholder}
-          disabled={disabled}
+          disabled={secondDisabled}
           readOnly={readOnlyProp}
           format={secondFormat}
           value={secondValue}
@@ -213,7 +225,13 @@ const RangeInput = React.forwardRef<RangeInputInstanceFunctions, RangeInputProps
           onEnter={(val, { e }) => handleEnter([firstValue, val], { e, position: 'second' })}
           onFocus={(val, { e }) => handleFocus([firstValue, val], { e, position: 'second' })}
           onBlur={(val, { e }) => handleBlur([firstValue, val], { e, position: 'second' })}
-          onChange={(val, { e }) => onChange?.([firstValue, val], { e, position: 'second', trigger: 'input' })}
+          onChange={(val, { e }) =>
+            onChange?.([firstValue, val], {
+              e,
+              position: 'second',
+              trigger: 'input',
+            })
+          }
           {...secondInputProps}
         />
         {suffixContent ? <div className={`${name}__suffix`}>{suffixContent}</div> : null}

@@ -1,22 +1,25 @@
-import React, { useState, useRef, useEffect } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import classNames from 'classnames';
 import {
   canAddNumber,
   canInputNumber,
   canReduceNumber,
-  formatUnCompleteNumber,
   canSetValue,
+  formatThousandths,
+  formatUnCompleteNumber,
   getMaxOrMinValidateResult,
   getStepValue,
-  formatThousandths,
   largeNumberToFixed,
 } from '@tdesign/common-js/input-number/number';
+
+import useCommonClassName from '../hooks/useCommonClassName';
 import useConfig from '../hooks/useConfig';
 import useControlled from '../hooks/useControlled';
-import useCommonClassName from '../hooks/useCommonClassName';
-import { InputNumberValue, TdInputNumberProps } from './type';
+
+import type * as React from 'react';
 // 计算逻辑，统一到 common 中，方便各框架复用（如超过 16 位的大数处理）
-import { InputProps } from '../input';
+import type { InputProps } from '../input';
+import type { InputNumberValue, TdInputNumberProps } from './type';
 
 export const specialCode = ['-', '.', 'e', 'E'];
 
@@ -45,8 +48,12 @@ export default function useInputNumber<T extends InputNumberValue = InputNumberV
     [`${classPrefix}-input-number--auto-width`]: props.autoWidth,
   });
 
-  const reduceClasses = classNames(`${classPrefix}-input-number__decrease`, { [STATUS.disabled]: disabledReduce });
-  const addClasses = classNames(`${classPrefix}-input-number__increase`, { [STATUS.disabled]: disabledAdd });
+  const reduceClasses = classNames(`${classPrefix}-input-number__decrease`, {
+    [STATUS.disabled]: disabledReduce,
+  });
+  const addClasses = classNames(`${classPrefix}-input-number__increase`, {
+    [STATUS.disabled]: disabledAdd,
+  });
 
   const getUserInput = (value: InputNumberValue) => {
     if (!value && value !== 0) return '';

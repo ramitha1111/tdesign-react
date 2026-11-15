@@ -1,5 +1,6 @@
 import React from 'react';
 import { Anchor } from 'tdesign-react';
+
 import type { TdAnchorProps } from 'tdesign-react';
 
 const { AnchorItem } = Anchor;
@@ -21,7 +22,13 @@ export default function AnchorAttach() {
         </Anchor>
         <div
           id="anchor-container"
-          style={{ width: '100%', height: '200px', overflow: 'auto', textAlign: 'center', fontSize: '22px' }}
+          style={{
+            width: '100%',
+            height: '200px',
+            overflow: 'auto',
+            textAlign: 'center',
+            fontSize: '22px',
+          }}
         >
           <div id="content-1" style={{ background: '#DFEFFF', lineHeight: '100px' }}>
             content-1

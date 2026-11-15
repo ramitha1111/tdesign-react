@@ -1,7 +1,8 @@
 import React, { useMemo } from 'react';
 import classNames from 'classnames';
-import useConfig from '../../hooks/useConfig';
+
 import parseTNode from '../../_util/parseTNode';
+import useConfig from '../../hooks/useConfig';
 import { ValidateStatus } from '../const';
 
 export default function useFormItemStyle(props) {
@@ -102,7 +103,9 @@ export default function useFormItemStyle(props) {
   if (label && labelWidth && labelAlign !== 'top') {
     if (typeof labelWidth === 'number') {
       labelStyle = { width: `${labelWidth}px` };
-      contentStyle = { marginLeft: layout !== 'inline' ? `${labelWidth}px` : '' };
+      contentStyle = {
+        marginLeft: layout !== 'inline' ? `${labelWidth}px` : '',
+      };
     } else {
       labelStyle = { width: labelWidth };
       contentStyle = { marginLeft: layout !== 'inline' ? labelWidth : '' };

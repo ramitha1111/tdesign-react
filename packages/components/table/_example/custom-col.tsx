@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { Table, Button, Space, Tag } from 'tdesign-react';
-import { ErrorCircleFilledIcon, CheckCircleFilledIcon, CloseCircleFilledIcon } from 'tdesign-icons-react';
+import { CheckCircleFilledIcon, CloseCircleFilledIcon, ErrorCircleFilledIcon } from 'tdesign-icons-react';
+import { Button, Space, Table, Tag } from 'tdesign-react';
 
 import type { CheckboxGroupValue, TableProps } from 'tdesign-react';
 
@@ -38,9 +38,21 @@ export default function TableCustomCol() {
       width: '150',
       cell: ({ row }) => {
         const statusNameListMap = {
-          0: { label: '审批通过', theme: 'success', icon: <CheckCircleFilledIcon /> },
-          1: { label: '审批失败', theme: 'danger', icon: <CloseCircleFilledIcon /> },
-          2: { label: '审批过期', theme: 'warning', icon: <ErrorCircleFilledIcon /> },
+          0: {
+            label: '审批通过',
+            theme: 'success',
+            icon: <CheckCircleFilledIcon />,
+          },
+          1: {
+            label: '审批失败',
+            theme: 'danger',
+            icon: <CloseCircleFilledIcon />,
+          },
+          2: {
+            label: '审批过期',
+            theme: 'warning',
+            icon: <ErrorCircleFilledIcon />,
+          },
         };
 
         return (

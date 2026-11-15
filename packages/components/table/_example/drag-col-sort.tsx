@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
+import { CheckCircleFilledIcon, CloseCircleFilledIcon, ErrorCircleFilledIcon } from 'tdesign-icons-react';
 import { Table, Tag } from 'tdesign-react';
-import { ErrorCircleFilledIcon, CheckCircleFilledIcon, CloseCircleFilledIcon } from 'tdesign-icons-react';
 
 import type { TableProps } from 'tdesign-react';
 
@@ -11,7 +11,12 @@ const statusNameListMap = {
 };
 
 const initialColumns: TableProps['columns'] = [
-  { colKey: 'applicant', title: '申请人', width: '100', fixed: 'left' as const },
+  {
+    colKey: 'applicant',
+    title: '申请人',
+    width: '100',
+    fixed: 'left' as const,
+  },
   {
     colKey: 'status',
     title: '申请状态',

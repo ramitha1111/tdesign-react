@@ -1,38 +1,42 @@
-import React, { ReactNode, useMemo, useRef, useState } from 'react';
+import React, { useMemo, useRef, useState } from 'react';
+import { HistoryIcon, LoadingIcon } from 'tdesign-icons-react';
 import { Button } from 'tdesign-react';
 import {
-  ChatList,
-  ChatSender,
-  ChatMessage,
-  TdChatListApi,
-  TdChatSenderApi,
-  ChatActionBar,
   AGUIAdapter,
-  isAIMessage,
   applyJsonPatch,
+  ChatActionBar,
+  ChatList,
+  ChatMessage,
+  ChatSender,
   getMessageContentForCopy,
+  isAIMessage,
+  useChat,
 } from '@tdesign-react/chat';
-import type {
-  TdChatMessageConfig,
-  TdChatActionsName,
-  TdChatSenderParams,
-  ChatMessagesData,
-  ChatRequestParams,
-  ChatBaseContent,
-  AIMessageContent,
-  AGUIHistoryMessage,
-} from '@tdesign-react/chat';
-import { LoadingIcon, HistoryIcon } from 'tdesign-icons-react';
-import { useChat } from '../../hooks/useChat';
+
 import {
+  HotelCard,
+  HumanInputForm,
+  HumanInputResult,
+  ItineraryCard,
   PlanningStatePanel,
   WeatherCard,
-  ItineraryCard,
-  HotelCard,
-  HumanInputResult,
-  HumanInputForm,
-} from '../components';
-import type { FormConfig } from '../components/HumanInputForm';
+} from '../../../chat-engine/_example/components';
+
+import type { ReactNode } from 'react';
+import type {
+  AGUIHistoryMessage,
+  AIMessageContent,
+  ChatBaseContent,
+  ChatMessagesData,
+  ChatRequestParams,
+  TdChatActionsName,
+  TdChatListApi,
+  TdChatMessageConfig,
+  TdChatSenderApi,
+  TdChatSenderParams,
+} from '@tdesign-react/chat';
+import type { FormConfig } from 'tdesign-react';
+
 import './travel-planner.css';
 
 // 扩展自定义消息体类型
@@ -209,7 +213,7 @@ export default function TravelPlannerChat() {
 
   const { chatEngine, messages, status } = useChat({
     defaultMessages,
-    chatServiceConfig: createChatServiceConfig(),
+    chatServiceConfig: createChatServiceConfig() as any,
   });
 
   const senderLoading = useMemo(() => status === 'pending' || status === 'streaming', [status]);
@@ -263,7 +267,7 @@ export default function TravelPlannerChat() {
       setUserInputFormConfig(null);
 
       // 2. 构造新的请求参数
-      const tools = chatEngine.getToolcallByName('get_travel_preferences') || {};
+      const tools = (chatEngine as any).getToolcallByName('get_travel_preferences') || {};
       const newRequestParams: ChatRequestParams = {
         prompt: inputValue,
         toolCallMessage: {
@@ -273,7 +277,7 @@ export default function TravelPlannerChat() {
       };
 
       // 3. 直接调用 chatEngine.continueChat(params) 继续请求
-      await chatEngine.continueChat(newRequestParams);
+      await (chatEngine as any).continueChat(newRequestParams);
       listRef.current?.scrollList({ to: 'bottom' });
     } catch (error) {
       console.error('提交用户输入失败:', error);
@@ -283,10 +287,10 @@ export default function TravelPlannerChat() {
 
   // 处理用户输入取消
   const handleUserInputCancel = async () => {
-    await chatEngine.continueChat({
+    await (chatEngine as any).continueChat({
       prompt: inputValue,
       toolCallMessage: {
-        ...chatEngine.getToolcallByName('get_travel_preferences'),
+        ...(chatEngine as any).getToolcallByName('get_travel_preferences'),
         result: 'user_cancel',
       },
     });
@@ -316,7 +320,7 @@ export default function TravelPlannerChat() {
           return (
             <div slot={`${type}-${index}`} key={`human-input-form-${index}`} className="content-card">
               <HumanInputForm
-                formConfig={userInputFormConfig}
+                formConfig={userInputFormConfig as any}
                 onSubmit={handleUserInputSubmit}
                 onCancel={handleUserInputCancel}
               />
@@ -400,7 +404,14 @@ export default function TravelPlannerChat() {
   if (isLoadingHistory) {
     return (
       <div className="travel-planner-container">
-        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            height: '100vh',
+          }}
+        >
           <LoadingIcon size="large" />
           <span style={{ marginLeft: '8px' }}>加载历史消息中...</span>
         </div>
@@ -436,7 +447,7 @@ export default function TravelPlannerChat() {
       </div>
 
       <div className="chat-content">
-        <ChatList ref={listRef} style={{ width: '100%', height: '500px' }}>
+        <ChatList ref={listRef as any}>
           {messages.map((message, idx) => (
             <ChatMessage key={message.id} {...messageProps[message.role]} message={message}>
               {renderMsgContents(message, idx === messages.length - 1)}
@@ -444,7 +455,7 @@ export default function TravelPlannerChat() {
           ))}
         </ChatList>
         <ChatSender
-          ref={inputRef}
+          ref={inputRef as any}
           value={inputValue}
           placeholder="请输入您的旅游需求，例如：请为我规划一个北京5日游行程"
           loading={senderLoading}
@@ -457,7 +468,7 @@ export default function TravelPlannerChat() {
       {/* 右下角固定规划状态面板 */}
       {planningState && (
         <div className="planning-panel-fixed">
-          <PlanningStatePanel state={planningState} currentStep={currentStep} />
+          <PlanningStatePanel className="" currentStep={currentStep} />
         </div>
       )}
     </div>

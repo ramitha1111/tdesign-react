@@ -1,8 +1,8 @@
-import React, { useState, useRef, useMemo } from 'react';
-import { EnhancedTable, MessagePlugin, Button, Popconfirm, Checkbox, Space, Loading, Link } from 'tdesign-react';
-import { ChevronRightIcon, ChevronDownIcon, MoveIcon, AddRectangleIcon, MinusRectangleIcon } from 'tdesign-icons-react';
+import React, { useMemo, useRef, useState } from 'react';
+import { AddRectangleIcon, ChevronDownIcon, ChevronRightIcon, MinusRectangleIcon, MoveIcon } from 'tdesign-icons-react';
+import { Button, Checkbox, EnhancedTable, Link, Loading, MessagePlugin, Popconfirm, Space } from 'tdesign-react';
 
-import type { TableProps, EnhancedTableProps, TableRowData } from 'tdesign-react';
+import type { EnhancedTableProps, TableProps, TableRowData } from 'tdesign-react';
 
 function getObject(i: number, currentPage: number) {
   return {
@@ -359,7 +359,10 @@ export default function TableTree() {
         rowKey="key"
         data={data}
         columns={columns}
-        tree={{ childrenKey: 'list', treeNodeColumnIndex: 2 /** , defaultExpandAll: true */ }}
+        tree={{
+          childrenKey: 'list',
+          treeNodeColumnIndex: 2 /** , defaultExpandAll: true */,
+        }}
         expandedTreeNodes={expandedTreeNodes}
         onExpandedTreeNodesChange={setExpandedTreeNodes}
         dragSort="row-handler"
