@@ -117,12 +117,20 @@ describe("ComponentName", () => {
 ## 4. 测试命令
 
 ```bash
-pnpm test                                                    # 运行所有测试
-pnpm test:coverage                                           # 生成覆盖率
-pnpm test:ui                                                 # 启动测试 UI
-pnpm test:snap                                               # 校验全部快照
-pnpm test:update                                             # 更新全部快照
-pnpm exec vitest run <component>                             # 运行指定组件的测试
+# 运行所有测试
+pnpm test
+
+# 生成覆盖率
+pnpm test:coverage
+
+# 校验全部快照
+pnpm test:snap
+
+# 更新全部快照
+pnpm test:update
+
+# 运行指定组件的测试
+pnpm exec vitest run <component>
 ```
 
 > `<component>` 替换为实际组件名，例如 `button`。

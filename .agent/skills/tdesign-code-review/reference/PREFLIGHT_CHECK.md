@@ -7,7 +7,7 @@
 ## §P-1 检测是否已安装
 
 ```bash
-command -v gh
+# 确认 gh 已安装
 gh --version
 ```
 
@@ -26,6 +26,7 @@ gh --version
 安装完成后，执行以下命令验证：
 
 ```bash
+# 确认安装后的 gh 版本
 gh --version
 ```
 
@@ -35,6 +36,7 @@ gh --version
 ## §P-3 检测是否已登录
 
 ```bash
+# 确认 gh 已登录
 gh auth status
 ```
 
@@ -46,7 +48,7 @@ gh auth status
 
 ## §P-4 通过标准
 
-- `command -v gh` 成功且 `gh --version` 正常。
+- `gh --version` 正常。
 - `gh auth status` 显示已登录。
 
 通过后继续执行 `SKILL.md` 接下来的流程。

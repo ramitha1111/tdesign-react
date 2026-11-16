@@ -27,6 +27,7 @@ description: This skill should be used when reviewing GitHub Pull Requests, anal
 ### 1.2 拉取信息
 
 ```bash
+# 读取 PR 标题、正文与目标分支
 gh pr view "$N" --repo Tencent/tdesign-react --json title,body,baseRefName
 ```
 
@@ -36,8 +37,17 @@ gh pr view "$N" --repo Tencent/tdesign-react --json title,body,baseRefName
 
 ## 2. 静态审查
 
+先列文件，再只展开源码变更。忽略测试快照的变更，不需要展开分析。
+
 ```bash
-gh pr diff "$N" --repo Tencent/tdesign-react
+# 列出变更文件及增删行数
+gh pr view "$N" --repo Tencent/tdesign-react --json files --jq '.files[] | "\(.path)\t+\(.additions)\t-\(.deletions)"'
+
+# 拉取 develop 与 PR 头
+git fetch origin develop "+pull/${N}/head:pr-${N}"
+
+# 只展开源码变更，排除快照
+git diff origin/develop...pr-${N} -- . ':(exclude,glob)**/*.snap' ':(exclude,glob)**/__snapshots__/**'
 ```
 
 **如果存在依赖上下文才能理解其意图，且代码附近缺少明确注释的改动，记录其 `路径:行号`。**已有清晰注释的改动无需记录。
