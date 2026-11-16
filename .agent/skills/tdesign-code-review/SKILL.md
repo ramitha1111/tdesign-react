@@ -116,7 +116,7 @@ gh pr diff "$N" --repo Tencent/tdesign-react
 
 ## 代码解释
 
-针对 §2 识别出的关键改动，记录 PR 中未提供明确动机说明的改动，并结合代码上下文分析其设计动机。
+针对 §2 识别出的关键改动，记录 PR 代码中未提供明确动机说明的改动，并结合代码上下文分析其设计动机。
 
 `packages/components/xxx/Foo.tsx:23-45`
 
