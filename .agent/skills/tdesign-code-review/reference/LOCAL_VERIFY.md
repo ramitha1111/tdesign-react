@@ -10,17 +10,17 @@ git fetch origin develop "pull/${N}/head:pr-${N}"
 
 ## §V-2 检查工作区
 
-```bash
-git status --porcelain
-```
-
-工作区干净后记录当前分支 **`PRE_BRANCH`**：
+只将**遗留文件**视为未提交变更。`packages/common` 当前检出提交与父仓库记录的 gitlink 不一致时，允许切换。
 
 ```bash
-PRE_BRANCH="$(git branch --show-current)"
+# 父仓库遗留文件（忽略子模块）
+git status --porcelain --ignore-submodul（修改、未跟踪）
+git -C packages/common status --porcelain
 ```
 
-如果存在未提交变更，**停止切换分支**，并执行 `AskQuestion`：
+两条均为空即可切换。
+
+任一非空则**停止切换分支**，并执行 `AskQuestion`：
 
 | 选项         | 操作                                                          |
 | ------------ | ------------------------------------------------------------- |
@@ -31,12 +31,21 @@ PRE_BRANCH="$(git branch --show-current)"
 
 流程结束后，继续执行下一步。
 
+允许切换时，记录恢复点。`PRE_COMMON_BRANCH` 为 `HEAD` 表示当时处于游离提交：
+
+```bash
+PRE_BRANCH="$(git branch --show-current)"
+PRE_COMMON_HEAD="$(git -C packages/common rev-parse HEAD)"
+PRE_COMMON_BRANCH="$(git -C packages/common rev-parse --abbrev-ref HEAD)"
+```
+
 ## §V-3 切换与同步 develop 分支
 
 ```bash
 git fetch origin develop
 git switch develop
 git pull --ff-only origin develop
+git submodule update --init packages/common
 ```
 
 `pull --ff-only` 失败时，执行 `AskQuestion`，禁止自动 `merge`。
@@ -75,7 +84,8 @@ pnpm exec vitest run "${TEST_PATH}"
 ### §V-5.2 PR 分支
 
 ```bash
-git switch "pr-${N}"
+git switch "pr-${N}" || git switch --recurse-submodules "pr-${N}"
+git submodule update --init packages/common
 pnpm exec vitest run "${TEST_PATH}"
 ```
 
@@ -88,13 +98,19 @@ pnpm exec vitest run "${TEST_PATH}"
 
 ```bash
 # 回到审查开始前所在分支
-git switch "${PRE_BRANCH}"
+git switch "${PRE_BRANCH}" || git switch --recurse-submodules "${PRE_BRANCH}"
 # 丢弃暂存区与工作区中对测试文件的修改
 git restore --staged --worktree -- "${TEST_PATH}" 2>/dev/null || true
 # 删除未跟踪的测试文件（含 review-pr-${N}.test.tsx）
 git clean -f -- "${TEST_PATH}"
 # 删除本地 PR 引用分支；未合并时用 -D 强制删除
 git branch -d "pr-${N}" || git branch -D "pr-${N}"
+# 恢复审查前的 common 分支
+if [ -n "${PRE_COMMON_BRANCH}" ] && [ "${PRE_COMMON_BRANCH}" != "HEAD" ]; then
+  git -C packages/common switch "${PRE_COMMON_BRANCH}"
+else
+  git -C packages/common checkout --detach "${PRE_COMMON_HEAD}"
+fi
 ```
 
 **禁止 `commit` 审查过程中产生的测试变更。**
