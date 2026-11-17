@@ -11,9 +11,9 @@ git status --porcelain --ignore-submodules
 git -C packages/common status --porcelain
 ```
 
-两条均为空时，记录恢复点并进入下一节。当前不在 `develop` 时同样切换。
+两条均为空时，记录下方恢复点。Bug Fix 接着执行 §V-2。其他 PR 不进入 §V-2，只执行 §V-4.2 的两条 git 命令。
 
-任一非空则停止，执行 `AskQuestion`。`stash`、`commit`、`其它` 完成后再记录恢复点并进入下一节。`静态审查` 结束本地验证。
+任一非空则停止，执行 `AskQuestion`。`stash`、`commit`、`其它` 完成后再记录恢复点并继续。`静态审查` 结束本地验证：此时不切换分支，审查报告写完即停止，不创建对比 demo，也不询问删除 `pr-<N>`。
 
 | 选项         | 操作                                                          |
 | ------------ | ------------------------------------------------------------- |
@@ -36,6 +36,8 @@ PRE_COMMON_BRANCH="$(git -C packages/common rev-parse --abbrev-ref HEAD)"
 ```
 
 ## §V-2 切换与同步 develop 分支
+
+仅 Bug Fix 执行。当前不在 `develop` 时同样切换。
 
 ```bash
 # 切到 develop
@@ -73,7 +75,7 @@ pnpm exec vitest run "${TEST_PATH}"
 | 失败 | 确认失败原因与 PR 描述的缺陷一致，接着处理测试文件并切到 PR 分支       |
 | 通过 | 判定为未复现，检查测试用例是否充分覆盖缺陷触发条件，修改用例并重新执行 |
 
-**修改用例后仍无法复现，则将该 PR 标记为无法复现，停止审查**。
+**修改用例后仍无法复现，则将该 PR 标记为无法复现，停止审查。** 此时停在 `develop`，不切回 `PRE_BRANCH`，不创建对比 demo。
 
 验证通过后，执行下一步按需处理 `TEST_PATH`，避免产生冲突：
 
@@ -85,42 +87,21 @@ pnpm exec vitest run "${TEST_PATH}"
 ### §V-4.2 PR 分支
 
 ```bash
-# 切到 PR 分支
+# 切到 PR 分支（Bug Fix 与其他 PR 都执行这两条）
 git switch "pr-${N}" || git switch --recurse-submodules "pr-${N}"
 
 # 同步 common 子仓库
 git submodule update --init packages/common
 
-# 在 PR 分支上运行同一用例
+# 仅 Bug Fix：在 PR 分支上运行同一用例
 pnpm exec vitest run "${TEST_PATH}"
 ```
 
-| 结果     | 判定与处理                                                                             |
-| -------- | -------------------------------------------------------------------------------------- |
-| **通过** | 修复验证通过，据此写审查报告                                                           |
-| **失败** | 修复验证未通过，禁止合并。按测试失败堆栈定位问题，并在代码建议中列出具体问题及修改建议 |
+| 结果     | 判定与处理                                                                                               |
+| -------- | -------------------------------------------------------------------------------------------------------- |
+| **通过** | 修复验证通过                                                                                             |
+| **失败** | 修复验证未通过，禁止合并。按测试失败堆栈定位问题，并在代码建议中列出具体问题及修改建议                 |
 
-## §V-5 恢复审查前状态
-
-```bash
-# 回到审查开始前所在分支
-git switch "${PRE_BRANCH}" || git switch --recurse-submodules "${PRE_BRANCH}"
-
-# 丢弃暂存区与工作区中对测试文件的修改
-git restore --staged --worktree -- "${TEST_PATH}" 2>/dev/null || true
-
-# 删除未跟踪的测试文件
-git clean -f -- "${TEST_PATH}"
-
-# 删除本地 PR 引用分支
-git branch -d "pr-${N}" || git branch -D "pr-${N}"
-
-# common 原先在分支上则切回，否则按原提交游离检出
-if [ -n "${PRE_COMMON_BRANCH}" ] && [ "${PRE_COMMON_BRANCH}" != "HEAD" ]; then
-  git -C packages/common switch "${PRE_COMMON_BRANCH}"
-else
-  git -C packages/common checkout --detach "${PRE_COMMON_HEAD}"
-fi
-```
+§V-4.2 结束后停在 `pr-<N>`。禁止切回 `PRE_BRANCH`，禁止删除 `pr-<N>`。这两件事只在用户于对比演示结束后选择删除时才执行。
 
 **禁止 `commit` 审查过程中产生的测试变更。**

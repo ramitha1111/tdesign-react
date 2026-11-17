@@ -1,5 +1,6 @@
 .DS_Store
 temp*
+.review/
 .tmp-aigc-dts
 robotMsg.json
 .history
