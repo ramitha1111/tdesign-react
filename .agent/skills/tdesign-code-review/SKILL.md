@@ -87,27 +87,20 @@ git diff origin/develop...pr-${N} -- . ':(exclude,glob)**/*.snap' ':(exclude,glo
 
 ## 3. 检出 PR
 
-本章结束时，当前分支必须是 `pr-<N>`。之后直到用户选择删除该分支之前，禁止切走。
-
-按 [LOCAL_VERIFY.md](reference/LOCAL_VERIFY.md) 顺序执行，不要跳回已完成的步骤。
+按 [LOCAL_VERIFY.md](reference/LOCAL_VERIFY.md) 做完工作区检查。然后只进入与 PR 类型对应的一份文档，不要跳进另一份。
 
 | PR 类型 | 执行 |
 | --- | --- |
-| Bug Fix | §V-1 起顺序执行到 §V-4，停在 `pr-<N>` |
-| 其他 | 只执行 §V-1，再执行 §V-4.2 的两条 git 命令，停在 `pr-<N>` |
+| Bug Fix | [BUG.md](reference/BUG.md) §B-1 至 §B-4。无法复现则停在 `develop`，不写 §4，也不进入 §5 |
+| 功能类 | [FEAT.md](reference/FEAT.md) §A-1 至 §A-2 |
+| 其他 | 执行下面两条命令，停在 `pr-<N>` |
 
-Bug Fix 在 §V-1 之前先摘录要点，供后续测试和对比 demo 使用。
+```bash
+git switch "pr-${N}" || git switch --recurse-submodules "pr-${N}"
+git submodule update --init packages/common
+```
 
-| 字段 | 来源 |
-| --- | --- |
-| Issue | `Fixes #`、正文链接 |
-| 组件 | 变更路径、标题 |
-| 复现 | 正文代码、Stackblitz、截图等 |
-
-| 阶段 | 分支 | 期望 |
-| --- | --- | --- |
-| 复现 | `develop` | `TEST_PATH` 失败 |
-| 修复 | `pr-<N>` | `TEST_PATH` 通过 |
+本章结束时，除「无法复现」外，当前分支必须是 `pr-<N>`。之后直到用户选择删除该分支之前，禁止切走。
 
 两个出口不再往后走：`静态审查` 只写 §4，不进入 §5；「无法复现」停在 `develop`，不写 §4，也不进入 §5。
 
@@ -164,9 +157,12 @@ Bug Fix 在 §V-1 之前先摘录要点，供后续测试和对比 demo 使用�
 
 ---
 
-## 5. 对比演示
+## 5. 演示
 
-仅 Bug Fix 执行。按 [COMPARE_DEMO.md](reference/COMPARE_DEMO.md) 从 §C-1 顺序执行到 §C-4：先打开对比页，确认左右两栏分别来自线上包和 PR 源码，再询问是否删除本地 `pr-<N>`。
+审查报告发出后，用下一条消息给出演示地址，并执行 [DEMO_FINISH.md](reference/DEMO_FINISH.md) §D-1。用户选择「没问题」之后，才执行 §D-2。地址和两次提问都不要写进审查报告。不要用浏览器或请求去查看页面。
 
-其他已停在 `pr-<N>` 的 PR 不建 demo，直接执行 COMPARE_DEMO §C-4。
-
+| PR 类型 | 执行 |
+| --- | --- |
+| Bug Fix | [BUG.md](reference/BUG.md) §B-5 至 §B-7 |
+| 功能类 | [FEAT.md](reference/FEAT.md) §A-3 至 §A-4。PR 已有 `_example` 时只给出这些 demo 的地址；没有则新建一个展示当前实现的 demo |
+| 其他 | 不建 demo，不执行 §D-1，直接执行 [DEMO_FINISH.md](reference/DEMO_FINISH.md) §D-2 |
