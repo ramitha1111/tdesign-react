@@ -51,4 +51,4 @@ gh auth status
 - `gh --version` 正常。
 - `gh auth status` 显示已登录。
 
-通过后继续执行 `SKILL.md` 接下来的流程。
+完成后回到 `SKILL.md` **§1** 继续执行。

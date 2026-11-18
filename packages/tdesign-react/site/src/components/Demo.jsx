@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-
 import { Button } from '@tdesign/components';
+
 import DraggableButton from './DraggableButton';
 
 export const demoFiles = import.meta.glob('../../../../components/**/_example/*.tsx');
+export const reviewFiles = import.meta.glob('../../../../../.review/demos/*.tsx');
 
 const demoObject = {};
 Object.keys(demoFiles).forEach((key) => {
@@ -16,6 +17,20 @@ Object.keys(demoFiles).forEach((key) => {
     demoObject[componentName].push(demoName);
   } else {
     demoObject[componentName] = [demoName];
+  }
+});
+
+const REVIEW_SCOPE = '_review';
+Object.keys(reviewFiles).forEach((key) => {
+  const match = key.match(/\/([\w-]+)\.tsx$/);
+  if (!match) return;
+  const [, demoName] = match;
+
+  demoObject[`${REVIEW_SCOPE}/${demoName}`] = reviewFiles[key];
+  if (demoObject[REVIEW_SCOPE]) {
+    demoObject[REVIEW_SCOPE].push(demoName);
+  } else {
+    demoObject[REVIEW_SCOPE] = [demoName];
   }
 });
 
