@@ -34,5 +34,25 @@ if [[ -n "${INFO}" ]]; then
   exit 0
 fi
 
-# 启动
-exec BROWSER=none pnpm --dir "${ROOT}" dev
+# 后台启动并等待端口就绪
+LOG_FILE="/tmp/tdesign-dev-${$}.log"
+nohup env BROWSER=none pnpm --dir "${ROOT}" dev >"${LOG_FILE}" 2>&1 </dev/null &
+DEV_PID=$!
+
+for _ in $(seq 1 60); do
+  INFO="$(get_dev_info)"
+  if [[ -n "${INFO}" ]]; then
+    PORT="${INFO##* }"
+    echo "${PORT}"
+    exit 0
+  fi
+  if ! kill -0 "${DEV_PID}" 2>/dev/null; then
+    echo "[ensure-dev] dev 服务启动失败，日志如下：" >&2
+    tail -n 30 "${LOG_FILE}" >&2 || true
+    exit 1
+  fi
+  sleep 1
+done
+
+echo "[ensure-dev] 等待 dev 服务端口超时，日志路径：${LOG_FILE}" >&2
+exit 1

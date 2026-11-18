@@ -9,7 +9,8 @@ description: This skill should be used when reviewing GitHub Pull Requests, anal
 
 本文中 `scripts/...` 均指当前 `SKILL.md` 同级目录下的同名相对路径，执行时需要定位至当前所在目录的对应脚本。
 
-根据 [PREFLIGHT_CHECK.md](reference/PREFLIGHT_CHECK.md) 确认 `gh` 的安装与登录。默认只审查，不提交代码。
+- **按需阅读与黑盒执行**：`reference/*.md` 仅在流程推进到对应章节时按需读取；`scripts/*` 为封装好的黑盒 CLI 工具，到达对应步骤时直接按文档命令执行，**禁止提前或额外读取脚本源码**（仅当脚本执行报错时再检查排查）。
+- **只读审查原则**：根据 [PREFLIGHT_CHECK.md](reference/PREFLIGHT_CHECK.md) 确认 `gh` 的安装与登录。默认只审查，不提交代码。
 
 ---
 
@@ -171,13 +172,15 @@ pnpm exec vitest run "${TEST_PATH}"
 
 ## 5. 示例演示
 
+> **流转规则**：输出 **§4** 报告后（且未在 **§3.1** 选择**静态审查**），**不要结束对话**，紧接着在同一流程中完成 **§5.1** 准备文件，然后另起一条消息执行 **§5.2** 输出演示地址，并在**该消息结尾立即调用 `AskQuestion`** 进入 **§5.3**。
+
 ### 5.1 准备文件
 
 确保当前位于 `pr-<N>` 分支，根据 PR 类型选择对应流程：
 
 #### 修复类
 
-1. 下载并解压当前最新的版本包：
+1. 下载并解压当前最新的版本包（将产物解压至 `.review/` 并写入 `.review/published-version`，无需读取脚本源码）：
 
    ```bash
    bash scripts/pack-published.sh
@@ -194,7 +197,7 @@ pnpm exec vitest run "${TEST_PATH}"
    }
    ```
 
-3. 生成对比演示页面 `.review/demos/pr-<N>.tsx`：
+3. 生成对比演示页面 `.review/demos/pr-<N>.tsx`（同时生成 `.review/PrCompareView.tsx`）：
 
    ```bash
    node scripts/write-demo.mjs \
@@ -217,13 +220,13 @@ pnpm exec vitest run "${TEST_PATH}"
 
 ### 5.2 启动服务
 
-1. 执行服务检测与启动脚本：
+1. 执行服务检测与启动脚本（复用已有或后台拉起 `pnpm dev`，就绪后在标准输出打印端口号 `<port>` 并自动退出，无需读取脚本源码）：
 
    ```bash
    bash scripts/ensure-dev.sh
    ```
 
-2. 另起一条消息，向用户输出完整演示地址（存在多个时逐条列出）：
+2. 另起一条消息，向用户输出完整演示地址（存在多个时逐条列出），并在**同一轮响应末尾立即调用 §5.3 第 1 步的 `AskQuestion`**（严禁只输出演示地址后结束回合等待用户手动回复）：
 
    - 临时审查演示：`http://127.0.0.1:<port>/react/demos/_review/pr-<N>`
    - PR 自带示例：`http://127.0.0.1:<port>/react/demos/<component>/<demo-name>`
@@ -232,7 +235,7 @@ pnpm exec vitest run "${TEST_PATH}"
 
 1. **演示页面**
 
-   调用 `AskQuestion` 提示用户核验：
+   紧接 **§5.2** 输出演示地址后，**必须立即调用 `AskQuestion`** 提示用户核验：
 
    | 选项         | 操作                                             |
    | ------------ | ------------------------------------------------ |
@@ -241,7 +244,7 @@ pnpm exec vitest run "${TEST_PATH}"
 
 2. **清理环境**：
 
-   另行调用 `AskQuestion` 询问是否清理审查产物并恢复工作区状态：
+   用户选择 **符合预期** 后，另行调用 `AskQuestion` 询问是否清理审查产物并恢复工作区状态：
 
    | 选项     | 操作                                                         |
    | -------- | ------------------------------------------------------------ |
