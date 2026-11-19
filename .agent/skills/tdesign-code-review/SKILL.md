@@ -9,8 +9,16 @@ description: This skill should be used when reviewing GitHub Pull Requests, anal
 
 本文中 `scripts/...` 均指当前 `SKILL.md` 同级目录下的同名相对路径，执行时需要定位至当前所在目录的对应脚本。
 
-- **按需阅读与黑盒执行**：`reference/*.md` 仅在流程推进到对应章节时按需读取；`scripts/*` 为封装好的黑盒 CLI 工具，到达对应步骤时直接按文档命令执行，**禁止提前或额外读取脚本源码**（仅当脚本执行报错时再检查排查）。
+- **按需读取与直接执行**：`reference/*.md` 仅在流程推进到对应章节时按需读取；`scripts/*` 的入参、产物与输出行为已在本指南中明确约定，到达对应步骤时直接按命令执行即可，无需提前或额外读取脚本源码（仅在执行报错时查看排查）。
 - **只读审查原则**：根据 [PREFLIGHT_CHECK.md](reference/PREFLIGHT_CHECK.md) 确认 `gh` 的安装与登录。默认只审查，不提交代码。
+
+| 脚本 | 用途与输入输出 |
+| --- | --- |
+| `scripts/prepare-review.sh <N>` | 拉取 `origin/develop` 与 `PR #<N>` 创建 `pr-<N>` 分支并绑定 push remote；stdout 输出 `PRE_BRANCH`、`PRE_COMMON_HEAD`、`PRE_COMMON_BRANCH` |
+| `scripts/pack-published.sh` | 下载解压 npm 最新版 `tdesign-react` 至 `.review/tdesign-react-<version>`（已存在则复用），写入 `.review/published-version`；stdout 输出解压路径 |
+| `scripts/write-demo.mjs <N> <description> <demo-file>` | 读取 `.review/published-version` 与 `<demo-file>`（须声明 `function Demo`），生成 `.review/PrCompareView.tsx` 与 `.review/demos/pr-<N>.tsx`；stdout 输出生成文件路径 |
+| `scripts/ensure-dev.sh` | 复用已有或后台启动 `pnpm dev` 服务，端口就绪后在 stdout 输出 `<port>` 并自动退出（失败或超时返回非 0） |
+| `scripts/cleanup-review.sh <N>` | 删除 `.review/` 临时演示与包缓存，移除或还原 `TEST_PATH`，切回 `PRE_BRANCH`、删除 `pr-<N>` 与临时 remote，并恢复 `packages/common` |
 
 ---
 
@@ -180,7 +188,7 @@ pnpm exec vitest run "${TEST_PATH}"
 
 #### 修复类
 
-1. 下载并解压当前最新的版本包（将产物解压至 `.review/` 并写入 `.review/published-version`，无需读取脚本源码）：
+1. 下载并解压当前最新的版本包（已缓存时自动复用，结果写入 `.review/published-version`）：
 
    ```bash
    bash scripts/pack-published.sh
@@ -197,7 +205,7 @@ pnpm exec vitest run "${TEST_PATH}"
    }
    ```
 
-3. 生成对比演示页面 `.review/demos/pr-<N>.tsx`（同时生成 `.review/PrCompareView.tsx`）：
+3. 生成对比演示页面 `.review/demos/pr-<N>.tsx`（同时基于模板生成 `.review/PrCompareView.tsx`）：
 
    ```bash
    node scripts/write-demo.mjs \
@@ -220,7 +228,7 @@ pnpm exec vitest run "${TEST_PATH}"
 
 ### 5.2 启动服务
 
-1. 执行服务检测与启动脚本（复用已有或后台拉起 `pnpm dev`，就绪后在标准输出打印端口号 `<port>` 并自动退出，无需读取脚本源码）：
+1. 执行服务检测与启动脚本（复用已有或后台拉起 `pnpm dev`，就绪后在 stdout 打印 `<port>` 并自动退出）：
 
    ```bash
    bash scripts/ensure-dev.sh
