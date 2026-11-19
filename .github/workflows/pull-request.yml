@@ -1,3 +1,9 @@
+# Optimized by ci-cost (https://github.com/mariotavarez/ci-cost)
+# Applied 2 optimizations:
+# - [MEDIUM] Add concurrency group to "pull-request.yml"
+# - [MEDIUM] 4 jobs clone the repo — consider artifact sharing
+# Estimated savings: ~3 min/run
+#
 # 文件名建议统一为 pull-request.yml
 # 应用 test-build.yml 的 demo
 
@@ -9,6 +15,10 @@ on:
     branches: [develop, main]
     types: [opened, synchronize, reopened]
 
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 jobs:
   check:
     runs-on: ubuntu-latest
